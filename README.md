@@ -1,19 +1,20 @@
-# meta-commsdk
+# CommSTSDK_Python
 
-meta-commsdk is a meta layer for Linux Yocto based distributions from STMicroelectronics, which enables python communication sdk service for 
-A7-M4 communication based on OpenAMP RpMsg over virtual com port.
-
+CommSTSDK_Python is a Python3 SDK from STMicroelectronics simplifing the virtual serial OpenAMP RpMsgs communiction between the A7 and M4 processors in the MP1 SoC. The SDK is meant to help and speed-up Python developpers not familiar with C OpenAMP development. 
+The SDK is divided in two modules:
+-- commsdk.py: simple serial protocol based on the set/get/notify paradigm 
+-- sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4
 
 ## Dependencies
-The meta-commsdk layer depends on the following layers:
- - meta-python
- - meta-virtualization
+The CommSTSDK_Python depends on the following:
+ - 
+ - 
 
 ## Installation
-The meta-commsdk layer can be download to a PC from its GitHub repository.
+The CommSTSDK_Python can be download to a PC from its GitHub repository.
 First, move to the <layers> directory of your distribution, e.g.:
   ```Shell
-  $ cd <path-to>/openstlinux-<version>/layers
+  $ pip3 install commsdk
   ```
 Clone the GitHub repository:
   ```Shell

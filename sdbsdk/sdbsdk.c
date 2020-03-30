@@ -26,21 +26,17 @@
 
 #define PY_SSIZE_T_CLEAN
 #include <python3.5m/Python.h>
-#include "rpmsg_sdb_sdk.h" 
+#include "sdbsdk.h" 
  
 /*** to be compiled on the MP1 board:  gcc -shared -o librpmsg_sdb_sdk.so -fPIC rpmsg_sdb_sdk.c  
     gcc -shared -o librpmsg_sdb_sdk.so -fPIC -I="/usr/include/python3.5m" rpmsg_sdb_sdk.c   ***/
-// TODO extract from backend.c in form of generic API the user side sdb drv    
 // TODO cross-compile with Recipes/Makefile of logicanalyzer or with pip3 install ?
 
 
 /***   Definitions   ***/ 
-//#define DATA_BUF_POOL_SIZE 1024*1024 /* 1MB */
-//#define NB_BUF 3
 #define RPMSG_SDB_IOCTL_SET_EFD _IOW('R', 0x00, struct rpmsg_sdb_ioctl_set_efd *)
 #define RPMSG_SDB_IOCTL_GET_DATA_SIZE _IOWR('R', 0x01, struct rpmsg_sdb_ioctl_get_data_size *)
 
-//#define TIMEOUT 60
 #define TIMEOUT 30
 
 
@@ -65,12 +61,10 @@ typedef enum {
 
 
 /***   Static glb variables   ***/
-//static int efd[NB_BUF];
+
 static int * efd;
 static int mFdSdbRpmsg = -1;  
-//static struct pollfd fds[NB_BUF];
 static struct pollfd * fds;
-//static void* mmappedData[NB_BUF];
 static void * (*mmappedData); 
 static int32_t fMappedData = 0;
 static pthread_t thread;
@@ -78,8 +72,7 @@ static machine_state_t mMachineState = STATE_READY;
 static uint8_t mDdrBuffAwaited=0;
 static int32_t mSampFreq_Hz = 4;
 static int32_t mSampParmCount;
-static uint32_t mNbCompData=0, mNbUncompData=0, mNbWrittenInFileData;
-static struct timeval tval_before, tval_after, tval_result;
+static uint32_t mNbCompData=0, mNbUncompData=0;
 static size_t filesize = 0; // also sdb buff size
 static uint32_t sdbnum = 0;
 
@@ -106,7 +99,6 @@ void unregister_buff_ready_cb(buffer_ready_cb * cbfunc)
 static void CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num) 
 {  
     char *filename = "/dev/rpmsg-sdb";
-    unsigned int i, cmd;    
  
     filesize = buff_size;
     sdbnum = buff_num;
@@ -117,13 +109,13 @@ static void CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num)
     //Open file
     mFdSdbRpmsg = open(filename, O_RDWR);
     assert(mFdSdbRpmsg != -1);
-    for (i=0;i<sdbnum;i++){
+    for (int i=0; i<sdbnum; i++){
         // Create the evenfd, and sent it to kernel driver, for notification of buffer full
         efd[i] = eventfd(0, 0);
         if (efd[i] == -1)
             error(EXIT_FAILURE, errno,
                 "failed to get eventfd");
-        printf("\nForward efd info for buf%d via cmd:%d with fd:%d and efd:%d\n",i,cmd,mFdSdbRpmsg,efd[i]);
+        printf("\nForward efd info for buf%d with fd:%d and efd:%d\n",i,mFdSdbRpmsg,efd[i]);
         q_set_efd.bufferId = i;
         q_set_efd.eventfd = efd[i];
 //        printf ("\nIOCTL RPMSG_SDB_IOCTL_SET_EFD: %d\n", RPMSG_SDB_IOCTL_SET_EFD);
@@ -157,11 +149,11 @@ static void sleep_ms(int milliseconds)
 void *sdb_thread(void *arg)
 {
     int ret, rc;
-    int8_t mesgOK = 1;
-    uint32_t length;
-    int32_t wsize;
+//    int8_t mesgOK = 1;
+//    uint32_t length;
+//    int32_t wsize;
     int buffIdx = 0;
-    char tmpStr[100];
+//    char tmpStr[100];
     char buf[16];
     int ThRetVal;
     
@@ -282,7 +274,7 @@ int  DeInitSdbReceiver(void)
     free (fds);
     free (mmappedData);
     printf("Buffers successfully unmapped\n");    
-    
+    return 0;
 } 
  
  

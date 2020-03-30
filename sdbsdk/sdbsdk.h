@@ -1,5 +1,5 @@
 
-typedef unsigned int buffer_ready_cb(char * buffer, unsigned int buffer_len);
+typedef unsigned int buffer_ready_cb(unsigned char * buffer, unsigned int buffer_len);
 
 extern void InitSdb(unsigned int, unsigned int);    
 extern int  InitSdbReceiver(void);
