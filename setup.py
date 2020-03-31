@@ -6,7 +6,7 @@ import shlex
 import sys
 import os
 
-VERSION='1.0.0'
+VERSION='0.0.3'
 
 def pre_install():
     """Do the custom compiling of the sdbsdk.so library from the makefile"""
@@ -50,7 +50,7 @@ except ImportError:
 
 
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding='utf-8') as fh:
     long_description = fh.read()
 
 setup(
@@ -71,4 +71,7 @@ setup(
     ],
     install_requires=["pyserial"],
     python_requires='>=3.5',
+    package_data={
+        'sdbsdk':['sdbsdk.c','sdbsdk.h','Makefile','sdbsdk.so']
+    }
 )
