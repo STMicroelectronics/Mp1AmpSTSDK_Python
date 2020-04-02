@@ -1,6 +1,6 @@
 
 CC ?= gcc
-CFLAGS += -g -Wall -fPIC
+CFLAGS +=  -Wall -fPIC
 
 LDFLAGS = -shared   # linking flags
 RM = rm -f   # rm command

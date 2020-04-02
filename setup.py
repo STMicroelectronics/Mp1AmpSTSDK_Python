@@ -6,7 +6,7 @@ import shlex
 import sys
 import os
 
-VERSION='0.0.3'
+VERSION='0.0.9'
 
 def pre_install():
     """Do the custom compiling of the sdbsdk.so library from the makefile"""
@@ -14,7 +14,7 @@ def pre_install():
         print("Working dir is " + os.getcwd())
 #        with open("bluepy/version.h","w") as verfile:
 #            verfile.write('#define VERSION_STRING "%s"\n' % VERSION)
-        for cmd in [ "make -C ./sdbsdk clean", "make -C sdbsdk -j1" ]:
+        for cmd in [ "make -C ./commsdk clean", "make -C commsdk -j1" ]:
             print("execute " + cmd)
             msgs = subprocess.check_output(shlex.split(cmd), stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
@@ -63,15 +63,18 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/mapellil/CommSTSDK_Python",
 	keywords=[ 'MP1', 'STM', 'STSDK' ],    
-    packages=setuptools.find_packages(),
+    #packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3.5",
         "License :: OSI Approved :: MIT License",
-        "Operating System :: OS Independent",
+        "Operating System :: POSIX :: Linux",
+        "Development Status :: 3 - Alpha"
     ],
-    install_requires=["pyserial"],
+    install_requires=["pyserial", "linuxfd"],
     python_requires='>=3.5',
+    packages=['commsdk'],
     package_data={
-        'sdbsdk':['sdbsdk.c','sdbsdk.h','Makefile','sdbsdk.so']
-    }
+        'commsdk': ['sdbsdk.c','sdbsdk.h','Makefile','sdbsdk.so']
+    },
+    cmdclass=setup_cmdclass,
 )

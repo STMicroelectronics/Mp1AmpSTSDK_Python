@@ -48,7 +48,6 @@ import os
 import sys
 import linuxfd, select
 import mmap  
-from commsdk import CommAPI  
 import ctypes 
 from ctypes import *
 from ctypes import CFUNCTYPE, POINTER
@@ -95,7 +94,11 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         self._buff_num = 0
         self._buff_size = 0      
 
-        self._sdb_drv = CDLL("./librpmsg_sdb_sdk.so")
+        temp = os.path.abspath(__file__)
+        temp = os.path.realpath(temp)
+        temp = os.path.dirname(temp)
+        libname = os.path.join(temp, "sdbsdk.so")
+        self._sdb_drv = CDLL(libname)
 #        CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, c_char_p, c_uint) 
         CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, POINTER(c_char), c_uint) 
         self._cb_get_buffer = CB_FTYPE_CHAR_P(self._buffer_ready_cb) 
