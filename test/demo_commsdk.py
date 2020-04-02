@@ -12,11 +12,11 @@ import time
 from datetime import datetime
 from threading import RLock
 import threading  
-from commsdk import CommAPIAnswersListener
-from commsdk import CommAPINotificationsListener
-from commsdk import CommAPI
-from rpmsg_sdb_sdk import RpmsgSdbAPI
-from rpmsg_sdb_sdk import RpmsgSdbAPIListener
+from commsdk.commsdk import CommAPIAnswersListener
+from commsdk.commsdk import CommAPINotificationsListener
+from commsdk.commsdk import CommAPI
+from commsdk.py_sdbsdk import RpmsgSdbAPI
+from commsdk.py_sdbsdk import RpmsgSdbAPIListener
 import ctypes
 
 evt_ntfy = threading.Event()
