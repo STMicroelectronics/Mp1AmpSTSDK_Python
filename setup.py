@@ -9,7 +9,7 @@ import os
 VERSION='0.0.10'
 
 def pre_install():
-    """Do the custom compiling of the sdbsdk.so library from the makefile"""
+    """Do the custom compiling of the libsdbsdk.so library from the makefile"""
     try:
         print("Working dir is " + os.getcwd())
 #        with open("bluepy/version.h","w") as verfile:
@@ -74,7 +74,7 @@ setup(
     python_requires='>=3.5',
     packages=['commsdk'],
     package_data={
-        'commsdk': ['sdbsdk.c','sdbsdk.h','Makefile','sdbsdk.so']
+        'commsdk': ['sdbsdk.c','sdbsdk.h','Makefile','libsdbsdk.so']
     },
     cmdclass=setup_cmdclass,
 )

@@ -97,7 +97,7 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         temp = os.path.abspath(__file__)
         temp = os.path.realpath(temp)
         temp = os.path.dirname(temp)
-        libname = os.path.join(temp, "sdbsdk.so")
+        libname = os.path.join(temp, "libsdbsdk.so")
         self._sdb_drv = CDLL(libname)
 #        CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, c_char_p, c_uint) 
         CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, POINTER(c_char), c_uint) 
