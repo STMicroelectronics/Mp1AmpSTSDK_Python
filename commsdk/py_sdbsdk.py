@@ -47,10 +47,11 @@ import fcntl
 import os
 import sys
 import linuxfd, select
-import mmap  
+import mmap 
 import ctypes 
 from ctypes import *
 from ctypes import CFUNCTYPE, POINTER
+from commsdk.comm_exceptions import CommsdkInvalidOperationException
 
 # pip3 install linuxfd
    
@@ -71,39 +72,47 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         :m4_fw_name: M4 firmare path 
         :type m4_fw_name: str (eg. /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf)
         """
+        try:
+
 # Insert kernel module stm32_rpmsg_sdb.ko
-        self._start_sdb_cmd = "insmod /lib/modules/4.19.49/extra/stm32_rpmsg_sdb.ko"
-#        os.system(self._start_sdb_cmd)
-#        time.sleep(0.5)     # give kern drv time to start
-        
-# Start M4 Fw if any
-        self._M4_Fw_name = m4_fw_name
-        if (m4_fw_name != None):
-            if self._is_M4Fw_running():
-                self._stop_M4Fw()
-                time.sleep(0.5)  # give fw time to stop
-                if (m4_fw_name != self._get_M4Fw_name()):
-                    print ("Error: wrong FW")
-                    # TODO rise exception ? Error ?
-            # start m4 Fw
-            self._set_M4Fw_name(m4_fw_name)
-            self._start_M4Fw()
-            time.sleep(1)  # give fw time to start
-        # if m4_fw_name == None: assumes m4 FW was already started by someone else
+            self._start_sdb_cmd = "insmod /lib/modules/4.19.49/extra/stm32_rpmsg_sdb.ko"
+        #        os.system(self._start_sdb_cmd)
+        #        time.sleep(0.5)     # give kern drv time to start
+            
+        # Start M4 Fw if any
+            self._M4_Fw_name = m4_fw_name
+            if (m4_fw_name != None):
+                if self._is_M4Fw_running():
+                    self._stop_M4Fw()
+                    time.sleep(0.5)  # give fw time to stop
+                    if (m4_fw_name != self._get_M4Fw_name()):
+                        raise CommsdkInvalidOperationException("\nError: M4 FW already running is different than FW name passed")
+                        # TODO rise exception ? Error ?
+                # start m4 Fw
+                self._set_M4Fw_name(m4_fw_name)
+                self._start_M4Fw()
+                time.sleep(1)  # give fw time to start
+            # if m4_fw_name == None: assumes m4 FW was already started by someone else
 
-        self._buff_num = 0
-        self._buff_size = 0      
+            self._buff_num = 0
+            self._buff_size = 0      
 
-        temp = os.path.abspath(__file__)
-        temp = os.path.realpath(temp)
-        temp = os.path.dirname(temp)
-        libname = os.path.join(temp, "libsdbsdk.so")
-        self._sdb_drv = CDLL(libname)
-#        CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, c_char_p, c_uint) 
-        CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, POINTER(c_char), c_uint) 
-        self._cb_get_buffer = CB_FTYPE_CHAR_P(self._buffer_ready_cb) 
-        self._sdb_buffer_rx_listener = None
-        
+            temp = os.path.abspath(__file__)
+            temp = os.path.realpath(temp)
+            temp = os.path.dirname(temp)
+            libname = os.path.join(temp, "libsdbsdk.so")
+            self._sdb_drv = CDLL(libname)
+            if (self._sdb_drv == None):
+                if self._is_M4Fw_running():
+                    self._stop_M4Fw()      
+                raise CommsdkInvalidOperationException("\nError: library 'libsdbsdk.so' not found")
+        #        CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, c_char_p, c_uint) 
+            CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, POINTER(c_char), c_uint) 
+            self._cb_get_buffer = CB_FTYPE_CHAR_P(self._buffer_ready_cb) 
+            self._sdb_buffer_rx_listener = None
+
+        except (CommsdkInvalidOperationException) as e:
+            raise e        
         return              
 
     def __del__(self):
@@ -181,24 +190,35 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         :param listener: Listener to be added.
         :type listener: :class:``
         """
-        if listener is None or self._sdb_buffer_rx_listener is not None:
-            printf ("Error add_sdb_buffer_rx_listener: wrong args")            
-            return -1            
-#        self._th_ntf = ThM4Notifications(self, "ThM4Notifications")            
-        self._sdb_buffer_rx_listener=listener
-        return 0
+        try:
 
+            if listener is None or self._sdb_buffer_rx_listener is not None:
+                raise CommsdkInvalidOperationException("\nError add_sdb_buffer_rx_listener: listener arg is None or listener alredy added")
+                printf ("Error add_sdb_buffer_rx_listener: wrong args")            
+                return -1            
+    #        self._th_ntf = ThM4Notifications(self, "ThM4Notifications")            
+            self._sdb_buffer_rx_listener=listener
+            return 0
+
+        except (CommsdkInvalidOperationException) as e:
+            raise e
 
     def remove_sdb_buffer_rx_listener(self, listener):
         """Remove a listener.
         :param listener: Listener to be removed.
         :type listener: :class:``
         """
-        if listener != self._sdb_buffer_rx_listener:
-            printf ("Error remove_sdb_notifications_listener: wrong args")            
-            return -1
-        self._sdb_buffer_rx_listener = None
-        return 0        
+        try:
+
+            if listener != self._sdb_buffer_rx_listener:
+                raise CommsdkInvalidOperationException("\nError remove_sdb_notifications_listener: wrong args")                
+                return -1
+            self._sdb_buffer_rx_listener = None
+            return 0        
+
+        except (CommsdkInvalidOperationException) as e:
+            raise e
+
 
     def _buffer_ready_cb(self, sdb_buff, sdb_buff_len):
         print ("CB _buffer_ready_cb called buff len: ", sdb_buff_len)
