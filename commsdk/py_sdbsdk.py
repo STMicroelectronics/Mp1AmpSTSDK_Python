@@ -128,12 +128,18 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
 
 
     def init_sdb(self, buffsize, buffnum): 
-        self._sdb_drv.InitSdbReceiver()   
-        self._buff_num = buffnum
-        self._buff_size = buffsize        
-        self._sdb_drv.register_buff_ready_cb(self._cb_get_buffer)                          
-        self._sdb_drv.InitSdb(self._buff_size, self._buff_num)    
+        try:
 
+            if (self._sdb_drv.InitSdbReceiver() !=0):
+                raise CommsdkInvalidOperationException("\nError init_sdb failed")              
+            self._buff_num = buffnum
+            self._buff_size = buffsize        
+            self._sdb_drv.register_buff_ready_cb(self._cb_get_buffer)                          
+            if (self._sdb_drv.InitSdb(self._buff_size, self._buff_num) != 0):
+                raise CommsdkInvalidOperationException("\nError init_sdb failed")
+
+        except (CommsdkInvalidOperationException) as e:
+            raise e        
 
     def deinit_sdb(self):
         self._sdb_drv.DeInitSdbReceiver()
