@@ -96,7 +96,7 @@ void unregister_buff_ready_cb(buffer_ready_cb * cbfunc)
 	notify_buffer_ready = NULL;
 }
 
-static void CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num) 
+static int CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num) 
 {  
     char *filename = "/dev/rpmsg-sdb";
  
@@ -108,20 +108,44 @@ static void CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num)
     printf("DBG filesize:%d\n",(unsigned int)filesize);
     //Open file
     mFdSdbRpmsg = open(filename, O_RDWR);
-    assert(mFdSdbRpmsg != -1);
+    if (mFdSdbRpmsg == -1) {
+        perror("CreateSdbBuffers failed to open file");
+        free (mmappedData);
+        free (fds);
+        free (efd);
+        return -1;
+    }
     for (int i=0; i<sdbnum; i++){
         // Create the evenfd, and sent it to kernel driver, for notification of buffer full
         efd[i] = eventfd(0, 0);
-        if (efd[i] == -1)
-            error(EXIT_FAILURE, errno,
-                "failed to get eventfd");
+        if (efd[i] == -1) {
+            perror("CreateSdbBuffers failed to get eventfd");
+            for (int n=0; n<i; n++){
+                int rc = munmap(mmappedData[n], filesize);
+                assert(rc == 0);
+            }            
+            free (mmappedData);
+            free (fds);
+            free (efd);
+            close (mFdSdbRpmsg);            
+            return -1;
+        }
         printf("\nForward efd info for buf%d with fd:%d and efd:%d\n",i,mFdSdbRpmsg,efd[i]);
         q_set_efd.bufferId = i;
         q_set_efd.eventfd = efd[i];
 //        printf ("\nIOCTL RPMSG_SDB_IOCTL_SET_EFD: %d\n", RPMSG_SDB_IOCTL_SET_EFD);
-        if(ioctl(mFdSdbRpmsg, RPMSG_SDB_IOCTL_SET_EFD, &q_set_efd) < 0)
-            error(EXIT_FAILURE, errno,
-                "failed to set efd");
+        if(ioctl(mFdSdbRpmsg, RPMSG_SDB_IOCTL_SET_EFD, &q_set_efd) < 0){
+            perror("CreateSdbBuffers failed to set efd");
+            for (int n=0; n<i; n++){
+                int rc = munmap(mmappedData[n], filesize);
+                assert(rc == 0);
+            }            
+            free (mmappedData);
+            free (fds);
+            free (efd);
+            close (mFdSdbRpmsg);            
+            return -1;            
+        }
         // watch eventfd for input
         fds[i].fd = efd[i];
         fds[i].events = POLLIN;
@@ -132,10 +156,22 @@ static void CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num)
                                 mFdSdbRpmsg,
                                 0);
 /*** FIXME  ?msynk tb called to flush mem ? ***/
-        printf("\nDBG mmappedData[%d]:%p\n", i, mmappedData[i]);
-        assert(mmappedData[i] != MAP_FAILED);
+        if (mmappedData[i] == MAP_FAILED){
+            perror("CreateSdbBuffers failed to mmap buffer");            
+            for (int n=0; n<i; n++){
+                int rc = munmap(mmappedData[n], filesize);
+                assert(rc == 0);
+            }            
+            free (mmappedData);
+            free (fds);
+            free (efd);
+            close (mFdSdbRpmsg);            
+            return -1;                        
+        }
+        printf("\nDBG mmappedData[%d]:%p\n", i, mmappedData[i]);        
         fMappedData = 1;
     }
+    return 0;
 }
 
 
@@ -166,13 +202,14 @@ void *sdb_thread(void *arg)
             if (ret == -1)
                 perror("poll()");
             else if (ret)
-                printf("Data buffer is available now.\n");
+                printf("Data buffer is available now. ret: %d\n", ret);
             else if (ret == 0){
                 printf("No buffer data within %d seconds.\n", TIMEOUT);
             }
             if (fds[mDdrBuffAwaited].revents & POLLIN) {
                 rc = read(efd[mDdrBuffAwaited], buf, 16);
                 if (!rc) {
+/*** FIXME ?whath to do? exit thread and roll back everything? how to notify app? through callback with NULL args? ***/                     
                     printf("stdin closed\n");
                     return 0;
                 }
@@ -182,6 +219,7 @@ void *sdb_thread(void *arg)
                 q_get_data_size.bufferId = mDdrBuffAwaited;
 
                 if(ioctl(mFdSdbRpmsg, RPMSG_SDB_IOCTL_GET_DATA_SIZE, &q_get_data_size) < 0) {
+/*** FIXME ?whath to do? exit thread and roll back everything? how to notify app? through callback with NULL args? ***/                                         
                     error(EXIT_FAILURE, errno, "Failed to get data size");
                 }
 
@@ -203,6 +241,7 @@ void *sdb_thread(void *arg)
                     if(notify_buffer_ready != NULL) {                    
                     	notify_buffer_ready(pCompData, q_get_data_size.size);     					                    
                     } else {
+/*** FIXME ?whath to do? exit thread and roll back everything? how to notify app? through callback with NULL args? ***/                                             
                     	printf ("Error: Call register_buff_ready_cb() before StartSdbReceiver()");
                     }   			
                 }
@@ -220,15 +259,15 @@ void *sdb_thread(void *arg)
             pthread_exit(&ThRetVal);
             break;
         }
-        sleep_ms(50);      // give time to system    
+        sleep_ms(50);      // give time to system sched
     }
 }  
 
 
-void InitSdb(unsigned int buff_size, unsigned int buff_num)
+int InitSdb(unsigned int buff_size, unsigned int buff_num)
 {
     printf("C func InitSdb called, buff_size: %d buff_num: %d \n", buff_size, buff_num);       
-    CreateSdbBuffers(buff_size, buff_num);  
+    return CreateSdbBuffers(buff_size, buff_num);  
 }
 
  
@@ -240,7 +279,7 @@ int InitSdbReceiver(void)
     
     printf("C func InitSdbReceiver called\n");        
     if (pthread_create( &thread, NULL, sdb_thread, NULL) != 0) {
-        printf("sdb_thread creation fails\n");
+        perror("sdb_thread creation fails\n");
         return -1;
     }
     return 0;
