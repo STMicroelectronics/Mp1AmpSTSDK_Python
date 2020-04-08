@@ -120,21 +120,6 @@ def main(argv):
             m4_answ_listener = M4_answ_listener() 
             m4_ntfy_listener = M4_ntfy_listener()
 
-
-    #        evt_answ.clear()
-    #        api_obj.add_answers_listener(m4_answ_listener)
-
-    #        with open('lena.jpg', rb) as file
-    #            finished = False
-    #            while (not finished)
-    #                datard = file.read (10000)
-    #                if datard != 10000
-    #                    finished =True
-    #                if api_obj.cmd_set(datard, 2) == -1:
-    #                    print ("API Locked: retry!")
-    #                evt_answ.wait()
-
-
             while True:
 
                 print ("Blocking cmd_get ...")                
