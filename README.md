@@ -12,13 +12,13 @@ This python package is meant to be run on the MP1-DK2 board only, this is becaus
 The CommSTSDK_Python depends on the following:
  - pyserial
  - linuxdf
- The above dependencies are automatically resolved during pip3 install phase.
+The above dependencies are automatically resolved during pip3 install phase.
 
 ## Installation
 The CommSTSDK_Python can be download from its Pypi repository.
 
   ```Shell
-  $ pip3 install commsdk
+  $ pip install -i https://test.pypi.org/simple/ commsdk
   ```
 
 ## Package creation from src
@@ -29,8 +29,7 @@ Clone the github repo
   ```
 
 Make the desired modifications to src files and then in the setup.py increase the VERSION number, than
-
-Create the Pypi package:
+create the Pypi package:
   ```Shell
   $ python3 setup.py sdist bdist_wheel
 
@@ -46,15 +45,15 @@ For you convenience a shell script is provided, see file build_pypi_pkg.sh, crea
 ## Open Points
  
  - Demo:
- The sdbsdk demo could be extended in order to use asynchronous cmds/answers to M4
- The demo could trap exceptions from below layers
- The CommAPINotificationsListener interfade is not yet tested, a specific m4fw is needed for this.
+  The sdbsdk demo could be extended in order to use asynchronous cmds/answers to M4
+  The demo could trap exceptions from below layers
+  The CommAPINotificationsListener interfade is not yet tested, a specific m4fw is needed for this.
  
  - py_sdbsdk.py:
- The RpmsgSdbAPI should be transformed in singleton obj
+  The RpmsgSdbAPI should be transformed in singleton obj
 
 - sdbsdk.c:
-In some system calls, within the thread, in the case of fails (eg ioctl, poll) the roll back is not handled as it should imply the thread exit and raising exception at python level. 
+  In some system calls, within the thread, in the case of fails (eg ioctl, poll) the roll back is not handled as it should imply the thread exit and raising exception at python level. 
 
 
 
