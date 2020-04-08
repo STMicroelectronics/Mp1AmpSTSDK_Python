@@ -3,34 +3,59 @@
 CommSTSDK_Python is a Python3 SDK from STMicroelectronics simplifing the virtual serial OpenAMP RpMsgs communiction between the A7 and M4 processors in the MP1 SoC. The SDK is meant to help and speed-up Python developpers not familiar with C OpenAMP development. 
 The SDK is divided in two modules:
 -- commsdk.py: simple serial protocol based on the set/get/notify paradigm 
--- sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4
+-- py_sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4
+-- sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko kernel object 
+
+This python package is meant to be run on the MP1-DK2 board only, this is because of the subtending HW dependecies (eg. kernel drv object, OpenAMP RpMsg, Shared Memory and associated M4 slave processor FW to communicate with)
 
 ## Dependencies
 The CommSTSDK_Python depends on the following:
- - 
- - 
+ - pyserial
+ - linuxdf
+ The above dependencies are automatically resolved during pip3 install phase.
 
 ## Installation
-The CommSTSDK_Python can be download to a PC from its GitHub repository.
-First, move to the <layers> directory of your distribution, e.g.:
+The CommSTSDK_Python can be download from its Pypi repository.
+
   ```Shell
   $ pip3 install commsdk
   ```
-Clone the GitHub repository:
+
+## Package creation from src
+To do this an MP1-DK2 board is needed, from the MP1-DK2 shell enter:
+Clone the github repo
   ```Shell
-  $ git clone https://github.com/STMicroelectronics/meta-commsdk.git
+  $ git clone https://github.com/mapellil/CommSTSDK_Python.git
   ```
-Enter the configuration folder, e.g.:
+
+Make the desired modifications to src files and then in the setup.py increase the VERSION number, than
+
+Create the Pypi package:
   ```Shell
-  $ cd <path-to>/openstlinux-<version>/build-openstlinuxweston-stm32mp1/conf/
+  $ python3 setup.py sdist bdist_wheel
+
   ```
-Copy and paste the following line within the “bblayers.conf” file, just before the “BBLAYERS” token definition, and check that the “BBLAYERS” token contains the “FRAMEWORKLAYERS” token, otherwise add it:
+and upload it on pypi repo:
   ```Shell
-FRAMEWORKLAYERS += "${@'${OEROOT}/layers/meta-commsdk' if os.path.isfile('${OEROOT}/layers/meta-commsdk/conf/layer.conf') else ''}" else ''}"
-BBLAYERS =+ "${OEROOT}/layers/meta-openembedded/meta-python"
-BBLAYERS =+ "${OEROOT}/layers/meta-virtualization"
+  $ python3 -m twine upload --skip-existing --repository-url https://test.pypi.org/legacy/  dist/*
   ```
-You can now build your distribution with BitBake.
+
+For you convenience a shell script is provided, see file build_pypi_pkg.sh, creating the pypi pkg and uploading it on the pypi repo.
+
+
+## Open Points
+ 
+ - Demo:
+ The sdbsdk demo could be extended in order to use asynchronous cmds/answers to M4
+ The demo could trap exceptions from below layers
+ The CommAPINotificationsListener interfade is not yet tested, a specific m4fw is needed for this.
+ 
+ - py_sdbsdk.py:
+ The RpmsgSdbAPI should be transformed in singleton obj
+
+- sdbsdk.c:
+In some system calls, within the thread, in the case of fails (eg ioctl, poll) the roll back is not handled as it should imply the thread exit and raising exception at python level. 
+
 
 
 ## License
