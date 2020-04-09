@@ -17,7 +17,6 @@ from commsdk.commsdk import CommAPINotificationsListener
 from commsdk.commsdk import CommAPI
 from commsdk.py_sdbsdk import RpmsgSdbAPI
 from commsdk.py_sdbsdk import RpmsgSdbAPIListener
-import ctypes
 
 evt_ntfy = threading.Event()
 evt_answ = threading.Event()
@@ -60,11 +59,11 @@ def main(argv):
         parser.add_argument('m4fw', type=str, help='The associated m4 fw to be run: <OpenAMP_TTY_echo.elf> or  <how2eldb03110.elf>')
 
         args = parser.parse_args()
-        print ('Input test is ', args.test)
+        print ('Input test is ', args.demo)
         print ('M4 fw file is ', args.m4fw)
 
         print ("Entering main Py")
-        if (args.test == "sdbsdk"):
+        if (args.demo == "sdbsdk"):
 
 #            ser_obj = CommAPI("/dev/ttyRPMSG0", None, "how2eldb03110.elf")            
             ser_obj = CommAPI("/dev/ttyRPMSG0", None, args.m4fw)            
@@ -110,13 +109,14 @@ def main(argv):
             raise SystemExit      
             return
                  
-
 #**********************************************   End sdb test   *****************************************************
-        elif (args.test == "commsdk"):
+
+        elif (args.demo == "commsdk"):
         
             api_obj = CommAPI("/dev/ttyRPMSG0", \
                               "/dev/ttyRPMSG1", \
-                              "OpenAMP_TTY_echo.elf" )   
+#                              "OpenAMP_TTY_echo.elf" )   
+                                args.m4fw)
             m4_answ_listener = M4_answ_listener() 
             m4_ntfy_listener = M4_ntfy_listener()
 

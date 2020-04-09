@@ -6,7 +6,7 @@ import shlex
 import sys
 import os
 
-VERSION='0.0.10'
+VERSION='0.0.13'
 
 def pre_install():
     """Do the custom compiling of the libsdbsdk.so library from the makefile"""
@@ -70,7 +70,7 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Development Status :: 3 - Alpha"
     ],
-    install_requires=["pyserial", "linuxfd"],
+    install_requires=['pyserial>=3'],
     python_requires='>=3.5',
     packages=['commsdk'],
     package_data={

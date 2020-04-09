@@ -11,7 +11,7 @@ This python package is meant to be run on the MP1-DK2 board only, this is becaus
 ## Dependencies
 The CommSTSDK_Python depends on the following:
  - pyserial
- - linuxdf
+ 
 The above dependencies are automatically resolved during pip3 install phase.
 
 ## Installation
