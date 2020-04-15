@@ -1,6 +1,32 @@
+################################################################################
+# COPYRIGHT(c) 2020 STMicroelectronics                                         #
+#                                                                              #
+# Redistribution and use in source and binary forms, with or without           #
+# modification, are permitted provided that the following conditions are met:  #
+#   1. Redistributions of source code must retain the above copyright notice,  #
+#      this list of conditions and the following disclaimer.                   #
+#   2. Redistributions in binary form must reproduce the above copyright       #
+#      notice, this list of conditions and the following disclaimer in the     #
+#      documentation and/or other materials provided with the distribution.    #
+#   3. Neither the name of STMicroelectronics nor the names of its             #
+#      contributors may be used to endorse or promote products derived from    #
+#      this software without specific prior written permission.                #
+#                                                                              #
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"  #
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE    #
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE   #
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE    #
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR          #
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF         #
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS     #
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN      #
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)      #
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE   #
+# POSSIBILITY OF SUCH DAMAGE.                                                  #
+################################################################################
+
 import sys, argparse
 import os
-
 from abc import ABCMeta
 from abc import abstractmethod
 from concurrent.futures import ThreadPoolExecutor
@@ -49,13 +75,19 @@ class M4_sdb_rx_listener (RpmsgSdbAPIListener):
 #
 # Main application.
 #
+# Two tests available:
+# -- commsdk: testing the OpenAMP comunication API between A7-M4 in a/sync mode and ASCII/binary mode
+#eg. python3 demo_commsdk.py commsdk /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf
+# -- sdbsdk: testing the Shared Data Buffer transfer API from M4 to A7 in async binary mode
+#eg. python3 demo_commsdk.py sdbsdk /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/la/lib/firmware/how2eldb03110.elf
+
+
 def main(argv):     
 
     try:
 
         parser = argparse.ArgumentParser(description='Run a demo with associated M4 Fw.')
         parser.add_argument('demo', type=str, help='The demo to be run: <commsdk> or <sdbsdk> ')
-
         parser.add_argument('m4fw', type=str, help='The associated m4 fw to be run: <OpenAMP_TTY_echo.elf> or  <how2eldb03110.elf>')
 
         args = parser.parse_args()
@@ -65,7 +97,6 @@ def main(argv):
         print ("Entering main Py")
         if (args.demo == "sdbsdk"):
 
-#            ser_obj = CommAPI("/dev/ttyRPMSG0", None, "how2eldb03110.elf")            
             ser_obj = CommAPI("/dev/ttyRPMSG0", None, args.m4fw)            
             sdb_obj = RpmsgSdbAPI(None)  
 
@@ -115,51 +146,49 @@ def main(argv):
         
             api_obj = CommAPI("/dev/ttyRPMSG0", \
                               "/dev/ttyRPMSG1", \
-#                              "OpenAMP_TTY_echo.elf" )   
                                 args.m4fw)
             m4_answ_listener = M4_answ_listener() 
             m4_ntfy_listener = M4_ntfy_listener()
 
-            while True:
+#            while True:
 
-                print ("Blocking cmd_get ...")                
-                datard = api_obj.cmd_get("Prova blk", 0)
-                print ("Returned: ",datard)
+            print ("Blocking cmd_get: Prova blk ...")                
+            datard = api_obj.cmd_get("Prova blk", 0)
+            print ("Returned: ",datard)
 
-                datawr = 123
-                datard = api_obj.cmd_set(datawr, 0)
-                print ("Returned: ",datard)
+            print ("Blocking cmd_set (binar data): 01,02,03,00 ...") 
+            datawr = b'\1\2\3\0'
+            datard = api_obj.cmd_set(datawr, 0)
+            print ("Returned: ",datard)
 
-                while True:
-                    pass
+            evt_answ.clear()
+            api_obj.add_answers_listener(m4_answ_listener)
 
-                evt_answ.clear()
-                api_obj.add_answers_listener(m4_answ_listener)
+            print ("Non blocking cmd_get: Prova non blk 1 ...")                        
+            if api_obj.cmd_get("Prova non blk 1", 2) == -1:
+                print ("API Locked: retry!")
+            evt_answ.wait()
 
-                print ("Non blocking cmd_get 1 ...")                        
-                if api_obj.cmd_get("Prova non blk 1", 2) == -1:
-                    print ("API Locked: retry!")
-                evt_answ.wait()
+	# TODO ack the M4 FW to not answer this cmd allowing response timeout to expire
+            evt_answ.clear()
+            print ("Non blocking cmd_get 2 ...(with no answ from M4 so timed out)")   
+            if api_obj.cmd_get("Prova non blk 2", 2) == -1:
+                print ("API Locked: retry!")        
+            evt_answ.wait() 
 
-    	# TODO ack the M4 FW to not answer this cmd allowing response timeout to expire
-                evt_answ.clear()
-                print ("Non blocking cmd_get 2 ...(with no answ from M4 so timed out)")   
-                if api_obj.cmd_get("Prova non blk 2", 2) == -1:
-                    print ("API Locked: retry!")        
-                evt_answ.wait() 
+	# async notify test
+            print ("Async notify test ...")           
+            evt_ntfy.clear()
+            api_obj.add_notifications_listener(m4_ntfy_listener)
+            print ("Enter in a separate shell: \"echo Prova ntfy > /dev/ttyRPMSG1\"")
+            evt_ntfy.wait()
 
-    	# async notify test
-                evt_ntfy.clear()
-                api_obj.add_notifications_listener(m4_ntfy_listener)
-                print ("Enter in a separate shell: echo Prova ntfy > /dev/ttyRPMSG1 ")
-                evt_ntfy.wait()
+            print ("Exiting test ...")
+            api_obj.remove_notifications_listener(m4_ntfy_listener)
+            api_obj.remove_answers_listener(m4_answ_listener)
 
-                print ("Exiting test")
-                api_obj.remove_notifications_listener(m4_ntfy_listener)
-                api_obj.remove_answers_listener(m4_answ_listener)
-
-            sys.exit(0)      
-            os._exit(0)
+#            sys.exit(0)      
+#            os._exit(0)
 
     except KeyboardInterrupt:
         try:	
