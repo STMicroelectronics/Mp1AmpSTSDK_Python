@@ -44,6 +44,7 @@ import threading
 import os
 import sys
 import time
+import shutil
 
 """Serial msgs terminator character"""
 TERMINATOR_SEQ = '\n'.encode('utf-8')
@@ -171,8 +172,14 @@ class CommAPI():
             if serial_port_cmd == serial_port_ntf:
                 raise CommsdkInvalidOperationException ("\nError CommAPI serial_port_cmd == serial_port_ntf")
 
-            self._m4_fw_name = m4_fw_name    #  FIXME the .sh, and FW path, and start FW not using .sh
-            if m4_fw_name != None:          # FIXME check if FW is already running: if not rise an exception
+            self._m4_fw_name = None            
+            self._m4_fw_path = None
+            if m4_fw_name != None:
+                if os.path.isfile(m4_fw_name):
+                    self._m4_fw_path, self._m4_fw_name = os.path.split(m4_fw_name)
+                    shutil.copyfile(m4_fw_name, "/lib/firmware/"+self._m4_fw_name)
+
+                      # FIXME check if FW is already running: if not rise an exception
                 if self._is_M4Fw_running():
                     self._stop_M4Fw()
                     time.sleep(0.5)  # give fw time to stop
@@ -180,7 +187,7 @@ class CommAPI():
                         print ("Error: wrong FW")
                         # TODO rise exception ? Error ?
                 # start m4 Fw
-                self._set_M4Fw_name(m4_fw_name)
+                self._set_M4Fw_name(self._m4_fw_name)
                 self._start_M4Fw()
                 time.sleep(1)  # give fw time to start                       
 
@@ -246,23 +253,21 @@ class CommAPI():
                     if type(msg) == str:
         #                    print ("TX:", msg.encode('utf-8'))
                         self._serial_port_cmd.write(msg.encode('utf-8')+TERMINATOR_SEQ)
-        #                    self._serial_port_cmd.write(msg.encode('utf-8')+'\0'.encode('utf-8'))
                         self._serial_port_cmd.flush()         
-                        if timeout == 0:
-                            self._serial_port_cmd.timeout = 1                        
-                            time.sleep(0.5)  # give M4 time to answ
-                            self._answer = self._serial_port_cmd.read_until(TERMINATOR_SEQ,None)          
+                        self._serial_port_cmd.timeout = 1                        
+                        time.sleep(0.5)  # give M4 time to answ
+                        self._answer = self._serial_port_cmd.read_until(TERMINATOR_SEQ,None)          
                         self._lock_cmd.release() 
                         return self._answer.decode('utf-8')
                     else:  # binary msg type
-        #                    print ("Tx msg type: ", type(msg))
-                        self._serial_port_cmd.timeout = 0.5                     
+#                        print ("Tx msg type: ", type(msg))
+                        print (msg, len(msg))                        
+                        self._serial_port_cmd.timeout = 1                     
                         self._serial_port_cmd.write(msg)                
                         self._serial_port_cmd.flush()         
-                        if timeout == -1:
-                            self._answer = self._serial_port_cmd.read(512) 
-                            self._lock_cmd.release()                    
-                            return self._answer              
+                        self._answer = self._serial_port_cmd.read(512) 
+                        self._lock_cmd.release()                    
+                        return self._answer              
 
                 elif timeout > 0 and self._answers_listener != None:  # non blocking call
                     self._serial_port_cmd.timeout = timeout

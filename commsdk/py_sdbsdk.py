@@ -43,18 +43,12 @@ import time
 from datetime import datetime
 import threading  
 from struct import *
-import fcntl
 import os
 import sys
-import linuxfd, select
-import mmap 
 import ctypes 
 from ctypes import *
 from ctypes import CFUNCTYPE, POINTER
 from commsdk.comm_exceptions import CommsdkInvalidOperationException
-
-# pip3 install linuxfd
-   
 
 
 class RpmsgSdbAPI():    # TODO make it a singleton object
@@ -75,13 +69,19 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         try:
 
 # Insert kernel module stm32_rpmsg_sdb.ko
-            self._start_sdb_cmd = "insmod /lib/modules/4.19.49/extra/stm32_rpmsg_sdb.ko"
+# TODO ?the kernel module should already be inserted by the distro?
+            self._start_sdb_cmd = "insmod /lib/modules/" + str(subprocess.check_output(['uname', '-r']),'utf-8').strip('\n') + "/extra/stm32_rpmsg_sdb.ko"
         #        os.system(self._start_sdb_cmd)
         #        time.sleep(0.5)     # give kern drv time to start
             
         # Start M4 Fw if any
-            self._M4_Fw_name = m4_fw_name
-            if (m4_fw_name != None):
+
+            self._m4_fw_name = None            
+            self._m4_fw_path = None
+            if m4_fw_name != None:
+                if os.path.isfile(m4_fw_name):
+                    self._m4_fw_path, self._m4_fw_name = os.path.split(m4_fw_name)
+                    shutil.copyfile(m4_fw_name, "/lib/firmware/"+self._m4_fw_name)
                 if self._is_M4Fw_running():
                     self._stop_M4Fw()
                     time.sleep(0.5)  # give fw time to stop
@@ -89,7 +89,7 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
                         raise CommsdkInvalidOperationException("\nError: M4 FW already running is different than FW name passed")
                         # TODO rise exception ? Error ?
                 # start m4 Fw
-                self._set_M4Fw_name(m4_fw_name)
+                self._set_M4Fw_name(self._m4_fw_name)
                 self._start_M4Fw()
                 time.sleep(1)  # give fw time to start
             # if m4_fw_name == None: assumes m4 FW was already started by someone else
