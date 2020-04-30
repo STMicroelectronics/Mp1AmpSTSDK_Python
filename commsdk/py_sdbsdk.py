@@ -49,6 +49,7 @@ import ctypes
 from ctypes import *
 from ctypes import CFUNCTYPE, POINTER
 from commsdk.comm_exceptions import CommsdkInvalidOperationException
+import subprocess
 
 
 class RpmsgSdbAPI():    # TODO make it a singleton object
@@ -71,7 +72,7 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
 # Insert kernel module stm32_rpmsg_sdb.ko
 # TODO ?the kernel module should already be inserted by the distro?
             self._start_sdb_cmd = "insmod /lib/modules/" + str(subprocess.check_output(['uname', '-r']),'utf-8').strip('\n') + "/extra/stm32_rpmsg_sdb.ko"
-        #        os.system(self._start_sdb_cmd)
+            os.system(self._start_sdb_cmd)
         #        time.sleep(0.5)     # give kern drv time to start
             
         # Start M4 Fw if any
