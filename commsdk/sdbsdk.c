@@ -123,7 +123,8 @@ static int CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num)
             for (int n=0; n<i; n++){
                 int rc = munmap(mmappedData[n], filesize);
                 assert(rc == 0);
-            }            
+            }
+	    sdbnum = 0;	    
             free (mmappedData);
             free (fds);
             free (efd);
@@ -140,6 +141,7 @@ static int CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num)
                 int rc = munmap(mmappedData[n], filesize);
                 assert(rc == 0);
             }            
+	    sdbnum = 0;
             free (mmappedData);
             free (fds);
             free (efd);
@@ -161,7 +163,8 @@ static int CreateSdbBuffers(unsigned int buff_size, unsigned int buff_num)
             for (int n=0; n<i; n++){
                 int rc = munmap(mmappedData[n], filesize);
                 assert(rc == 0);
-            }            
+            } 
+            sdbnum = 0;	    
             free (mmappedData);
             free (fds);
             free (efd);
@@ -306,7 +309,7 @@ int  DeInitSdbReceiver(void)
         int rc = munmap(mmappedData[i], filesize);
         assert(rc == 0);
     }
-
+    sdbnum = 0;
     close(mFdSdbRpmsg);
     fMappedData = 0;
     free (efd);
