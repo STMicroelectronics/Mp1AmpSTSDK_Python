@@ -72,7 +72,7 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
 # Insert kernel module stm32_rpmsg_sdb.ko
 # TODO ?the kernel module should already be inserted by the distro?
             self._start_sdb_cmd = "insmod /lib/modules/" + str(subprocess.check_output(['uname', '-r']),'utf-8').strip('\n') + "/extra/stm32_rpmsg_sdb.ko"
-            os.system(self._start_sdb_cmd)
+        #    os.system(self._start_sdb_cmd)
         #        time.sleep(0.5)     # give kern drv time to start
             
         # Start M4 Fw if any
@@ -118,8 +118,8 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
 
     def __del__(self):
         print ("Deleting RpmsgSdbAPI object")
-        if (self._M4_Fw_name != None and self._get_M4Fw_name() == self._M4_Fw_name):
-            print ("RpmsgSdbAPI obj stopping M4 FW: ", self._M4_Fw_name)
+        if (self._m4_fw_name != None and self._get_M4Fw_name() == self._m4_fw_name):
+            print ("RpmsgSdbAPI obj stopping M4 FW: ", self._m4_fw_name)
             self._stop_M4Fw()
         while (self._is_M4Fw_running()):
              time.sleep(0.3)  # give M4 FW time to stop
