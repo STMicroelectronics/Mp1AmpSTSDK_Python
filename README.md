@@ -2,9 +2,9 @@
 
 CommSTSDK_Python is a Python3 SDK from STMicroelectronics simplifing the virtual serial OpenAMP RpMsgs communiction between the A7 and M4 processors in the MP1 SoC. The SDK is meant to help and speed-up Python developpers not familiar with C OpenAMP development and Linux kernel drivers interface.
 The SDK is divided in two modules:
--- commsdk.py: simple serial protocol based on the set/get/notify paradigm, transporting ASCCI UTF-8 strings. 
--- py_sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4 through OpenAMP and dedicated Linux external kernel driver
--- sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko kernel object 
+- commsdk.py: simple serial protocol based on the set/get/notify paradigm, transporting ASCCI UTF-8 strings. 
+- py_sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4 through OpenAMP and dedicated Linux external kernel driver
+- sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko external kernel object 
 
 This python package is meant to be run on the MP1-DK2 board only, this is because of the subtending HW dependecies (eg. kernel drv object, OpenAMP RpMsg, Shared Memory and associated M4 slave processor FW to communicate with)
 
@@ -13,19 +13,19 @@ The CommSTSDK_Python depends on the following:
  - pyserial
  The above dependencies are automatically resolved during pip3 install phase or within the dedicate Yocto layer
 
-## Compile dependencies
-
-
-
 ## Installation
-The CommSTSDK_Python can be download from its Pypi repository.
+The CommSTSDK_Python can be installed from its Pypi repository.
 
   ```Shell
   $ pip install -i https://test.pypi.org/simple/ commsdk
   ```
 
 ## Package creation from src
-To regenerate the package the best is to setup a MP1-DK2 Rev.C board flashing it with the OpenSTLinux distro V1.2 adding the dedicated Python layer (including pip and the build essentials). From the DK2 shell install the following pkgs:
+To regenerate the package the best is to setup a MP1-DK2 Rev.C board flashing it with the OpenSTLinux distro V1.2 adding the dedicated Python layer (including pip and the build essentials). The support Yocto layer can be found at:
+```
+https://github.com/mapellil/meta-st-kern-ext-mod
+```
+From the DK2 shell install the following pkgs:
 
   ```Shell
   $ pip3 install wheel
@@ -51,16 +51,17 @@ and upload it on pypi repo:
 
 For you convenience a shell script is provided, see file build_pypi_pkg.sh, creating the pypi pkg and uploading it on the pypi repo.
 
-To modify the associated Linux external kernel driver "stm32-rpmsg-sdb.ko" it needs to recompile and flash the whole distibution as the source of this driver is contained into the associated layer. To avoid flashing the board a possible shortcut is to directly copy the compiled .ko form the host into the DK2 target through scp command.
+To modify the associated Linux external kernel driver "stm32-rpmsg-sdb.ko" it needs to recompile and flash the whole distibution as the source of this driver is contained into the associated above layer. To avoid flashing the board a possible shortcut is to directly copy the compiled .ko form the host into the DK2 target through scp command.
 
-## M4 FW modifications from src
+### M4 FW modifications from src
 To run the pkg and its associated demo two M4 Fw are needed on DK-2 target:
--- OpenAMP_TTY_echo.elf to run the demo_commsdk.py "commsdk" test
--- how2eldb04120.elf to run the demo_commsdk.py "sdbsdk" test
+- OpenAMP_TTY_echo.elf to run the demo_commsdk.py "commsdk" test
+- how2eldb04120.elf to run the demo_commsdk.py "sdbsdk" test
 The M4 Fw needs to be cross compiled from the IDE SystemWorkbench-2.4.0 (/mnt/storage/MP1/STM32-CoPro-MPU_Full_Install_linux64_0.4.8/SystemWorkbench-2.4.0_mpu) or STM32CubeIDE or EWARM or MDK-ARM so first install your preferred  IDE. 
 The M4 FW how2eldb04120.elf is available at https://github.com/STMicroelectronics/logicanalyser
 The M4 FW OpenAMP_TTY_echo.elf is available within the STM32CubeMP1 MPU Firmware Package at https://github.com/STMicroelectronics/STM32CubeMP1
 Both the M4 FW packages needs to be installed at the same directory level to allow resolving cross dependencies within the how2eldb04120 project. 
+Once the new .elf is obtained for a quick test is possible to scp it on the DK-2 target; otherwise to deliver in the distro the new M4FW together with its dedicated Yocto layer just copy the .elf in the layer "firmware" folder. 
 
 
 ## Open Points
