@@ -54,8 +54,11 @@ and upload it on pypi repo:
 For you convenience a shell script is provided, see file build_pypi_pkg.sh, creating the pypi pkg and uploading it on the pypi repo.
 
 ### External Kernel Driver modifications
-To modify the associated Linux external kernel driver "stm32-rpmsg-sdb.ko" it needs to recompile and flash the whole distibution as the source of this driver is contained into the associated above indicated layer. To avoid flashing the board a possible shortcut is to directly copy the compiled .ko form the host into the DK2 target through scp command. Notice that, if the modifications done at kernel driver level are impacting also the C wrapper (generating .so module) it needs to recompile it on the DK-2 board running the setup script with the command "python3 setup.py sdist bdist_wheel"
-For convenience, while developping on the DK-2 board, after having cloned the whole py pkg 
+To modify the associated Linux external kernel driver "stm32-rpmsg-sdb.ko" it needs to recompile and flash the whole distibution as the source of this driver is contained into the associated above indicated layer. To avoid flashing the board a possible shortcut is to directly copy the compiled .ko form the host into the DK2 target through scp command. Notice that, if the modifications done at kernel driver level are impacting also the C wrapper (generating .so module) it needs to recompile it on the DK-2 board running the setup script with the command "python3 setup.py sdist bdist_wheel".
+For convenience, while developping on the DK-2 board, after having cloned the whole py pkg and applied modfications, it can be addressed setting the environemntal variable"
+```
+ $ export PYTHONPATH=<py pkg cloned folder>
+```
 
 ### M4 FW modifications from src
 To run the pkg and its associated demo two M4 Fw (precompiled .elf) have to be installed on DK-2 target:
