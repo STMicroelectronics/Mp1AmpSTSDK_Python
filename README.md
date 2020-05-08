@@ -20,11 +20,13 @@ The CommSTSDK_Python can be installed from its Pypi repository.
   $ pip install -i https://test.pypi.org/simple/ commsdk
   ```
 
-## Package creation from src
-To regenerate the package the best is to setup a MP1-DK2 Rev.C board flashing it with the OpenSTLinux distro V1.2 adding the dedicated Python layer (including pip and the build essentials). The support Yocto layer can be found at:
+## Package creation/modifications from src
+To regenerate the package the best is to setup a MP1-DK2 Rev.C board flashing it with the OpenSTLinux distro V1.2 including the dedicated Python layer (including pip and the build essentials). The support Yocto layer can be found at:
 ```
 https://github.com/mapellil/meta-st-kern-ext-mod
 ```
+The step above, so having the whole Yocto ST "Distribution package" plus the above layer, is mandatory only in case the required modifications involve the associated kernel driver; otherwise in case the modifications are limited to the python part or to the C part the step above can be skipped and the modifications can be done directly on the DK-2 board following the steps below.
+
 From the DK2 shell install the following pkgs:
 
   ```Shell
