@@ -51,17 +51,19 @@ and upload it on pypi repo:
 
 For you convenience a shell script is provided, see file build_pypi_pkg.sh, creating the pypi pkg and uploading it on the pypi repo.
 
-To modify the associated Linux external kernel driver "stm32-rpmsg-sdb.ko" it needs to recompile and flash the whole distibution as the source of this driver is contained into the associated above layer. To avoid flashing the board a possible shortcut is to directly copy the compiled .ko form the host into the DK2 target through scp command.
+### External Kernel Driver modifications
+To modify the associated Linux external kernel driver "stm32-rpmsg-sdb.ko" it needs to recompile and flash the whole distibution as the source of this driver is contained into the associated above indicated layer. To avoid flashing the board a possible shortcut is to directly copy the compiled .ko form the host into the DK2 target through scp command. Notice that, if the modifications done at kernel driver level are impacting also the C wrapper (generating .so module) it needs to recompile it on the DK-2 board running the setup script with the command "python3 setup.py sdist bdist_wheel"
+For convenience, while developping on the DK-2 board, after having cloned the whole py pkg 
 
 ### M4 FW modifications from src
-To run the pkg and its associated demo two M4 Fw are needed on DK-2 target:
+To run the pkg and its associated demo two M4 Fw (precompiled .elf) have to be installed on DK-2 target:
 - OpenAMP_TTY_echo.elf to run the demo_commsdk.py "commsdk" test
 - how2eldb04120.elf to run the demo_commsdk.py "sdbsdk" test
-The M4 Fw needs to be cross compiled from the IDE SystemWorkbench-2.4.0 (/mnt/storage/MP1/STM32-CoPro-MPU_Full_Install_linux64_0.4.8/SystemWorkbench-2.4.0_mpu) or STM32CubeIDE or EWARM or MDK-ARM so first install your preferred  IDE. 
-The M4 FW how2eldb04120.elf is available at https://github.com/STMicroelectronics/logicanalyser
-The M4 FW OpenAMP_TTY_echo.elf is available within the STM32CubeMP1 MPU Firmware Package at https://github.com/STMicroelectronics/STM32CubeMP1
-Both the M4 FW packages needs to be installed at the same directory level to allow resolving cross dependencies within the how2eldb04120 project. 
-Once the new .elf is obtained for a quick test is possible to scp it on the DK-2 target; otherwise to deliver in the distro the new M4FW together with its dedicated Yocto layer just copy the .elf in the layer "firmware" folder. 
+To generate the two .elf the M4 Fw needs to be cross compiled from the IDE SystemWorkbench-2.4.0 (/mnt/storage/MP1/STM32-CoPro-MPU_Full_Install_linux64_0.4.8/SystemWorkbench-2.4.0_mpu) or STM32CubeIDE or EWARM or MDK-ARM so first install your preferred  IDE on the host.
+The project for the M4 FW "how2eldb04120" is available at https://github.com/STMicroelectronics/logicanalyser
+The project for the M4 FW "OpenAMP_TTY_echo" is available within the "STM32CubeMP1 MPU Firmware Package" at https://github.com/STMicroelectronics/STM32CubeMP1
+Both the M4 FW packages needs to be installed at the same root directory level to allow resolving cross dependencies within the how2eldb04120 project. 
+Once the new .elf is obtained, for a quick test is possible to scp it on the DK-2 target; otherwise to deliver in the distro the new M4FW together with its dedicated Yocto layer just copy the .elf in the "firmware" folder of the layer. 
 
 
 ## Open Points
