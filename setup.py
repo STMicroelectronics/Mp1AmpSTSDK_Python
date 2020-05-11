@@ -6,7 +6,7 @@ import shlex
 import sys
 import os
 
-VERSION='0.0.18'
+VERSION='0.0.1'
 
 def pre_install():
     """Do the custom compiling of the libsdbsdk.so library from the makefile"""
@@ -54,14 +54,14 @@ with open("README.md", "r", encoding='utf-8') as fh:
     long_description = fh.read()
 
 setup(
-    name="commsdk", 
+    name="mp1ampstsdk", 
     version=VERSION,
     author="Licio Mapelli",
     author_email="licio.mapelli@st.com",
-    description="MP1 OpenAMP RpMsg communication SDK",
+    description="MP1 OpenAMP RpMsg A7-M4 communication SDK",
     long_description="OpenAMP RpMsg Py extension to simplify A7-M4 communications",
     long_description_content_type="text/markdown",
-    url="https://github.com/mapellil/CommSTSDK_Python",
+    url="https://github.com/mapellil/Mp1AmpSTSDK_Python",
 	keywords=[ 'MP1', 'STM', 'STSDK' ],    
     #packages=setuptools.find_packages(),
     classifiers=[
@@ -74,7 +74,7 @@ setup(
     python_requires='>=3.5',
     packages=['commsdk'],
     package_data={
-        'commsdk': ['sdbsdk.c','sdbsdk.h','Makefile','libsdbsdk.so']
+        'mp1ampstsdk': ['sdbsdk.c','sdbsdk.h','Makefile','libsdbsdk.so']
     },
     cmdclass=setup_cmdclass,
 )
