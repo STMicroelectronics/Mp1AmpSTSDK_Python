@@ -6,7 +6,7 @@ import shlex
 import sys
 import os
 
-VERSION='0.0.1'
+VERSION='0.0.2'
 
 def pre_install():
     """Do the custom compiling of the libsdbsdk.so library from the makefile"""
@@ -14,7 +14,7 @@ def pre_install():
         print("Working dir is " + os.getcwd())
 #        with open("bluepy/version.h","w") as verfile:
 #            verfile.write('#define VERSION_STRING "%s"\n' % VERSION)
-        for cmd in [ "make -C ./commsdk clean", "make -C commsdk -j1" ]:
+        for cmd in [ "make -C ./mp1ampstsdk clean", "make -C mp1ampstsdk -j1" ]:
             print("execute " + cmd)
             msgs = subprocess.check_output(shlex.split(cmd), stderr=subprocess.STDOUT)
     except subprocess.CalledProcessError as e:
@@ -72,7 +72,7 @@ setup(
     ],
     install_requires=['pyserial>=3'],
     python_requires='>=3.5',
-    packages=['commsdk'],
+    packages=['mp1ampstsdk'],
     package_data={
         'mp1ampstsdk': ['sdbsdk.c','sdbsdk.h','Makefile','libsdbsdk.so']
     },
