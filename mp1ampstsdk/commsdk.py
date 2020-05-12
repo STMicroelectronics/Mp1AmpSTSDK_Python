@@ -38,7 +38,7 @@ from abc import ABCMeta
 from abc import abstractmethod
 from serial import SerialException
 from serial import SerialTimeoutException
-from commsdk.comm_exceptions import CommsdkInvalidOperationException
+from mp1ampstsdk.comm_exceptions import CommsdkInvalidOperationException
 import serial
 import threading  
 import os

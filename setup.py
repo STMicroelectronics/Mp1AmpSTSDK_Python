@@ -6,7 +6,7 @@ import shlex
 import sys
 import os
 
-VERSION='0.0.2'
+VERSION='0.0.3'
 
 def pre_install():
     """Do the custom compiling of the libsdbsdk.so library from the makefile"""

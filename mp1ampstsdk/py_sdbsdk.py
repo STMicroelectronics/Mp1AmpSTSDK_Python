@@ -48,7 +48,7 @@ import sys
 import ctypes 
 from ctypes import *
 from ctypes import CFUNCTYPE, POINTER
-from commsdk.comm_exceptions import CommsdkInvalidOperationException
+from mp1ampstsdk.comm_exceptions import CommsdkInvalidOperationException
 import subprocess
 
 

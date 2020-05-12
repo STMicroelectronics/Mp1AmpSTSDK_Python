@@ -38,11 +38,11 @@ import time
 from datetime import datetime
 from threading import RLock
 import threading  
-from commsdk.commsdk import CommAPIAnswersListener
-from commsdk.commsdk import CommAPINotificationsListener
-from commsdk.commsdk import CommAPI
-from commsdk.py_sdbsdk import RpmsgSdbAPI
-from commsdk.py_sdbsdk import RpmsgSdbAPIListener
+from mp1ampstsdk.commsdk import CommAPIAnswersListener
+from mp1ampstsdk.commsdk import CommAPINotificationsListener
+from mp1ampstsdk.commsdk import CommAPI
+from mp1ampstsdk.py_sdbsdk import RpmsgSdbAPI
+from mp1ampstsdk.py_sdbsdk import RpmsgSdbAPIListener
 
 evt_ntfy = threading.Event()
 evt_answ = threading.Event()
