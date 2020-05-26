@@ -4,7 +4,7 @@ Mp1AmpSTSDK_Python is a Python3 SDK from STMicroelectronics simplifing the virtu
 The SDK is divided in two modules:
 - commsdk.py: simple serial protocol based on the set/get/notify paradigm, transporting ASCCI UTF-8 strings. 
 - py_sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4 through OpenAMP and dedicated Linux external kernel driver
-- sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko external kernel object 
+- sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko external kernel object. The compilation of sdbsdk.c file generates the libsdbsdk.so which is the User space wrapper library containing API of the above described kernel module. 
 
 This python package is meant to be run on the MP1-DK2 board only, this is because of the subtending HW dependecies (eg. kernel drv object, OpenAMP RpMsg, Shared Memory and associated M4 slave processor FW to communicate with)
 
@@ -17,7 +17,7 @@ The Mp1AmpSTSDK_Python depends on the following:
 The CommSTSDK_Python can be installed from its Pypi repository.
 
   ```Shell
-  $ pip install -i https://test.pypi.org/simple/ mp1ampstsdk
+  $ pip3 install mp1ampstsdk
   ```
 
 ## Package creation/modifications from src
