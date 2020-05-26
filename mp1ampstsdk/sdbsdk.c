@@ -25,12 +25,12 @@
 #include <error.h>
 
 #define PY_SSIZE_T_CLEAN
-#include <python3.5m/Python.h>
+//#include <python3.7/Python.h>
+#include <Python.h>
 #include "sdbsdk.h" 
- 
-/*** to be compiled on the MP1 board:  gcc -shared -o librpmsg_sdb_sdk.so -fPIC rpmsg_sdb_sdk.c  
+
+/*** if is to be compiled on the MP1 board:  gcc -shared -o librpmsg_sdb_sdk.so -fPIC rpmsg_sdb_sdk.c  
     gcc -shared -o librpmsg_sdb_sdk.so -fPIC -I="/usr/include/python3.5m" rpmsg_sdb_sdk.c   ***/
-// TODO cross-compile with Recipes/Makefile of logicanalyzer or with pip3 install ?
 
 
 /***   Definitions   ***/ 

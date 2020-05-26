@@ -1,8 +1,8 @@
 
 CC ?= gcc
-CFLAGS +=  -Wall -fPIC
+CFLAGS +=  -Wall -fPIC `pkg-config --cflags python3`
 
-LDFLAGS = -shared   # linking flags
+LDFLAGS = -shared  `pkg-config --libs python3`   # linking flags
 RM = rm -f   # rm command
 TARGET_LIB = libsdbsdk.so  # target lib
 
@@ -16,7 +16,7 @@ $(TARGET_LIB): $(OBJS)
 	$(CC) ${LDFLAGS} -o $@ $^
 
 $(SRCS:.c):%.c
-	$(CC) $(CFLAGS) $< >$@
+	$(CC) $(CFLAGS)  $< >$@
 
 include $(SRCS:.c)
 
