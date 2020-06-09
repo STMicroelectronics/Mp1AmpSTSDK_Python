@@ -23,7 +23,7 @@ The CommSTSDK_Python can be installed from its Pypi repository.
 ## Package creation/modifications from src
 To regenerate the package the best is to setup a MP1-DK2 Rev.C board flashing it with the OpenSTLinux distro V1.2 including the dedicated Python layer (including pip and the build essentials). The support Yocto layer can be found at:
 ```
-https://github.com/mapellil/meta-st-py3-ext
+https://github.com/STMicroelectronics/meta-st-py3-ext
 ```
 The step above, so having the whole Yocto ST "Distribution package" plus the above layer, is mandatory only in case the required modifications involve the associated kernel driver; otherwise in case the modifications are limited to the python part or to the C part the step above can be skipped and the modifications can be done directly on the DK-2 board following the steps below.
 
@@ -37,7 +37,7 @@ From the DK2 shell install the following pkgs:
 Then, from the MP1-DK2 shell Clone the github repo entering:
 
   ```Shell
-  $ git clone https://github.com/mapellil/Mp1AmpSTSDK_Python.git
+  $ git clone https://github.com/STMicroelectronics/Mp1AmpSTSDK_Python.git
   ```
 
 Make the desired modifications to src files and then in the setup.py increase the VERSION number, than
