@@ -6,7 +6,8 @@ The SDK is divided in two modules:
 - py_sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4 through OpenAMP and dedicated Linux external kernel driver
 - sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko external kernel object. The compilation of sdbsdk.c file generates the libsdbsdk.so which is the User space wrapper library containing API of the above described kernel module. 
 
-This python package is meant to be run on the MP1-DK2 board only, this is because of the subtending HW dependecies (eg. kernel drv object, OpenAMP RpMsg, Shared Memory and associated M4 slave processor FW to communicate with)
+This python package is meant to be run on the MP1-DK2 board, this is because of the subtending HW dependecies (eg. kernel drv object, OpenAMP RpMsg, Shared Memory and associated M4 slave processor FW to communicate with)
+In case is needed only the OpenAMP virtual comm port functionality the pkg can be considered as "pure python3" with no dependendecies (except OpenAMP). While, if the sdbsdk (Shared Data Buffer) functionality is needed, the pkg has dependencies to the internally generated shared object (python3/C mixed code) and to the layer https://github.com/STMicroelectronics/meta-st-py3-ext generating the stm32_rpmsg_sdb.ko kernel object which must be included in the distribution.
 
 ## Python dependencies
 The Mp1AmpSTSDK_Python depends on the following:
@@ -23,7 +24,7 @@ The CommSTSDK_Python can be installed from its Pypi repository.
 ## Package creation/modifications from src
 To regenerate the package the best is to setup a MP1-DK2 Rev.C board flashing it with the OpenSTLinux distro V1.2 including the dedicated Python layer (including pip and the build essentials). The support Yocto layer can be found at:
 ```
-https://github.com/mapellil/meta-st-py3-ext
+https://github.com/STMicroelectronics/meta-st-py3-ext/
 ```
 The step above, so having the whole Yocto ST "Distribution package" plus the above layer, is mandatory only in case the required modifications involve the associated kernel driver; otherwise in case the modifications are limited to the python part or to the C part the step above can be skipped and the modifications can be done directly on the DK-2 board following the steps below.
 
