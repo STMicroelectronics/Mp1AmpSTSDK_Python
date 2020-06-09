@@ -6,7 +6,8 @@ The SDK is divided in two modules:
 - py_sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4 through OpenAMP and dedicated Linux external kernel driver
 - sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko external kernel object. The compilation of sdbsdk.c file generates the libsdbsdk.so which is the User space wrapper library containing API of the above described kernel module. 
 
-This python package is meant to be run on the MP1-DK2 board only, this is because of the subtending HW dependecies (eg. kernel drv object, OpenAMP RpMsg, Shared Memory and associated M4 slave processor FW to communicate with)
+This python package is meant to be run on the MP1-DK2 board, this is because of the subtending HW dependecies (eg. kernel drv object, OpenAMP RpMsg, Shared Memory and associated M4 slave processor FW to communicate with)
+In case is needed only the OpenAMP virtual comm port functionality the pkg can be considered as "pure python3" with no dependendecies (except OpenAMP). While, if the sdbsdk (Shared Data Buffer) functionality is needed, the pkg has dependencies to the internally generated shared object (python3/C mixed code) and to the layer https://github.com/STMicroelectronics/meta-st-py3-ext generating the stm32_rpmsg_sdb.ko kernel object which must be included in the distribution.
 
 ## Python dependencies
 The Mp1AmpSTSDK_Python depends on the following:
