@@ -97,8 +97,8 @@ def main(argv):
         print ("Entering main Py")
         if (args.demo == "sdbsdk"):
 
-            ser_obj = CommAPI("/dev/ttyRPMSG0", None, args.m4fw)            
-            sdb_obj = RpmsgSdbAPI(None)  
+            ser_obj = CommAPI("/dev/ttyRPMSG0", None, args.m4fw, True)            
+            sdb_obj = RpmsgSdbAPI(None, True)  
 
             m4_sdb_listener = M4_sdb_rx_listener()
             sdb_obj.add_sdb_buffer_rx_listener(m4_sdb_listener)                   
@@ -146,7 +146,8 @@ def main(argv):
         
             api_obj = CommAPI("/dev/ttyRPMSG0", \
                               "/dev/ttyRPMSG1", \
-                                args.m4fw)
+                                args.m4fw,
+                                True)
             m4_answ_listener = M4_answ_listener() 
             m4_ntfy_listener = M4_ntfy_listener()
 
