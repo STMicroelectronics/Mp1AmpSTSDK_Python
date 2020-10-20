@@ -52,13 +52,15 @@ from mp1ampstsdk.comm_exceptions import CommsdkInvalidOperationException
 import subprocess
 
 
+# CLASSES
+
 class RpmsgSdbAPI():    # TODO make it a singleton object
     """RpmsgSdbAPI class.
     This class manages the communication between the A7 host userland python 
     application and the M4 customized FW through the kernel module rpmsg_sdb_driver
     """
 
-    def __init__(self, m4_fw_name=None):
+    def __init__(self, m4_fw_name=None, verbose=False):
         """Constructor.
         :param serial_port: Serial Port device path. Refer to
             `Serial <https://pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial>`_
@@ -69,11 +71,12 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         """
         try:
 
+            self._verbose = verbose
 # Insert kernel module stm32_rpmsg_sdb.ko
 # TODO ?the kernel module should already be inserted by the distro?
             self._start_sdb_cmd = "insmod /lib/modules/" + str(subprocess.check_output(['uname', '-r']),'utf-8').strip('\n') + "/extra/stm32_rpmsg_sdb.ko"
-        #    os.system(self._start_sdb_cmd)
-        #        time.sleep(0.5)     # give kern drv time to start
+            os.system(self._start_sdb_cmd)
+            time.sleep(0.5)     # give kern drv time to start
             
         # Start M4 Fw if any
 
@@ -83,12 +86,11 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
                 if os.path.isfile(m4_fw_name):
                     self._m4_fw_path, self._m4_fw_name = os.path.split(m4_fw_name)
                     shutil.copyfile(m4_fw_name, "/lib/firmware/"+self._m4_fw_name)
+
                 if self._is_M4Fw_running():
                     self._stop_M4Fw()
                     time.sleep(0.5)  # give fw time to stop
-                    if (m4_fw_name != self._get_M4Fw_name()):
-                        raise CommsdkInvalidOperationException("\nError: M4 FW already running is different than FW name passed")
-                        # TODO rise exception ? Error ?
+
                 # start m4 Fw
                 self._set_M4Fw_name(self._m4_fw_name)
                 self._start_M4Fw()
@@ -103,10 +105,10 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
             temp = os.path.dirname(temp)
             libname = os.path.join(temp, "libsdbsdk.so")
             self._sdb_drv = CDLL(libname)
-            if (self._sdb_drv == None):
+            if self._sdb_drv == None:
                 if self._is_M4Fw_running():
                     self._stop_M4Fw()      
-                raise CommsdkInvalidOperationException("\nError: library 'libsdbsdk.so' not found")
+                raise CommsdkInvalidOperationException("\nError: library 'libsdbsdk.so' not found. Please build it again.")
         #        CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, c_char_p, c_uint) 
             CB_FTYPE_CHAR_P = CFUNCTYPE(c_int, POINTER(c_char), c_uint) 
             self._cb_get_buffer = CB_FTYPE_CHAR_P(self._buffer_ready_cb) 
@@ -117,14 +119,17 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         return              
 
     def __del__(self):
-        print ("Deleting RpmsgSdbAPI object")
+        if self._verbose:
+            print ("Deleting RpmsgSdbAPI object")
         if (self._m4_fw_name != None and self._get_M4Fw_name() == self._m4_fw_name):
-            print ("RpmsgSdbAPI obj stopping M4 FW: ", self._m4_fw_name)
+            if self._verbose:
+                print ("RpmsgSdbAPI obj stopping M4 FW: ", self._m4_fw_name)
             self._stop_M4Fw()
         while (self._is_M4Fw_running()):
              time.sleep(0.3)  # give M4 FW time to stop
         self._sdb_buffer_rx_listener = None             
-        print ("RpmsgSdbAPI removing stm32_rpmsg_sdb.ko kernel mod")
+        if self._verbose:
+            print ("RpmsgSdbAPI removing stm32_rpmsg_sdb.ko kernel mod")
         os.system("rmmod stm32_rpmsg_sdb.ko")
 
 
@@ -199,10 +204,9 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         """
         try:
 
-            if listener is None or self._sdb_buffer_rx_listener is not None:
-                raise CommsdkInvalidOperationException("\nError add_sdb_buffer_rx_listener: listener arg is None or listener alredy added")
-                printf ("Error add_sdb_buffer_rx_listener: wrong args")            
-                return -1            
+            if listener is None:
+                raise CommsdkInvalidOperationException("\nError add_sdb_buffer_rx_listener: null listener")
+
     #        self._th_ntf = ThM4Notifications(self, "ThM4Notifications")            
             self._sdb_buffer_rx_listener=listener
             return 0
@@ -217,9 +221,8 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         """
         try:
 
-            if listener != self._sdb_buffer_rx_listener:
-                raise CommsdkInvalidOperationException("\nError remove_sdb_notifications_listener: wrong args")                
-                return -1
+            if not self._sdb_buffer_rx_listener:
+                raise CommsdkInvalidOperationException("\nError remove_sdb_notifications_listener: listener was not added")
             self._sdb_buffer_rx_listener = None
             return 0        
 
@@ -228,14 +231,15 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
 
 
     def _buffer_ready_cb(self, sdb_buff, sdb_buff_len):
-        print ("CB _buffer_ready_cb called buff len: ", sdb_buff_len)
+        if self._verbose:
+            print ("CB _buffer_ready_cb called buff len: ", sdb_buff_len)
         if self._sdb_buffer_rx_listener is not None:
             self._sdb_buffer_rx_listener.on_M4_sdb_rx(sdb_buff, sdb_buff_len)
         return 0
 
 # INTERFACES
 
-class  RpmsgSdbAPIListener(object):
+class RpmsgSdbAPIListener(object):
     """Interface used by the :class:` ` to
     notify Shared Data Buffer received form M4.
     """

@@ -88,7 +88,7 @@ def main(argv):
 
         parser = argparse.ArgumentParser(description='Run a demo with associated M4 Fw.')
         parser.add_argument('demo', type=str, help='The demo to be run: <commsdk> or <sdbsdk> ')
-        parser.add_argument('m4fw', type=str, help='The associated m4 fw to be run: <OpenAMP_TTY_echo.elf> or  <how2eldb03110.elf>')
+        parser.add_argument('m4fw', type=str, help='The associated m4 fw to be run: <OpenAMP_TTY_echo.elf> or <how2eldb03110.elf>')
 
         args = parser.parse_args()
         print ('Input test is ', args.demo)
@@ -97,8 +97,8 @@ def main(argv):
         print ("Entering main Py")
         if (args.demo == "sdbsdk"):
 
-            ser_obj = CommAPI("/dev/ttyRPMSG0", None, args.m4fw)            
-            sdb_obj = RpmsgSdbAPI(None)  
+            ser_obj = CommAPI("/dev/ttyRPMSG0", None, args.m4fw, '\n', True)
+            sdb_obj = RpmsgSdbAPI(None, True)  
 
             m4_sdb_listener = M4_sdb_rx_listener()
             sdb_obj.add_sdb_buffer_rx_listener(m4_sdb_listener)                   
@@ -146,7 +146,9 @@ def main(argv):
         
             api_obj = CommAPI("/dev/ttyRPMSG0", \
                               "/dev/ttyRPMSG1", \
-                                args.m4fw)
+                                args.m4fw,
+                                '\n',
+                                True)
             m4_answ_listener = M4_answ_listener() 
             m4_ntfy_listener = M4_ntfy_listener()
 
@@ -180,12 +182,14 @@ def main(argv):
             print ("Async notify test ...")           
             evt_ntfy.clear()
             api_obj.add_notifications_listener(m4_ntfy_listener)
+            evt_ntfy.wait()
+            evt_ntfy.clear()
             print ("Enter in a separate shell: \"echo Prova ntfy > /dev/ttyRPMSG1\"")
             evt_ntfy.wait()
 
             print ("Exiting test ...")
-            api_obj.remove_notifications_listener(m4_ntfy_listener)
-            api_obj.remove_answers_listener(m4_answ_listener)
+            api_obj.remove_notifications_listener()
+            api_obj.remove_answers_listener()
 
 #            sys.exit(0)      
 #            os._exit(0)
