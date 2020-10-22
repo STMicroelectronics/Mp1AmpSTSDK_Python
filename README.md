@@ -49,8 +49,13 @@ create the Pypi package:
   ```
 and upload it on pypi repo:
   ```Shell
+  $ python3 -m twine upload --skip-existing --repository pypi dist/*
+  ```
+in case a pypi test is needed upload the new pkg on test.pypi repo:
+  ```Shell
   $ python3 -m twine upload --skip-existing --repository-url https://test.pypi.org/legacy/  dist/*
   ```
+
 
 For you convenience a shell script is provided, see file build_pypi_pkg.sh, creating the pypi pkg and uploading it on the pypi repo.
 
