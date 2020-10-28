@@ -158,7 +158,7 @@ def main(argv):
 
 #            while True:
 
-            print ("Blocking cmd_get: Prova blk ...'")                
+            print ("Blocking cmd_get: Prova blk; ...'")                
             datard = api_obj.cmd_get("Prova blk;", 0)
             print ("Returned: ",datard)
 
