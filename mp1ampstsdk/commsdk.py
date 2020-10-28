@@ -127,9 +127,9 @@ class ThM4Notifications(threading.Thread):
             # SUCCESS
             # This is the current implementation of the RPMSG protocol, so yes the A7 as to send the first message to finalize the connection.
             # https://wiki.st.com/stm32mpu/wiki/Coprocessor_management_troubleshooting_grid
-#            self._caller._serial_port_ntf.write(self._terminator)
-#            ret = self._caller._serial_port_ntf.read_until(self._terminator, None)   # wait 0.2 Sec for spurious echo if any                
-#            self._caller._serial_port_ntf.flush() 
+            self._caller._serial_port_ntf.write(self._terminator)
+            ret = self._caller._serial_port_ntf.read_until(self._terminator, None)   # wait for spurious echo if any                
+            self._caller._serial_port_ntf.flush() 
 
             while True:
                 if self._evt_stop_ntf.isSet():
@@ -223,7 +223,7 @@ class CommAPI():
             if serial_port_ntf != None:
                 self._serial_port_ntf = serial.Serial()
                 self._serial_port_ntf.port = serial_port_ntf
-                self._serial_port_ntf.timeout = 1
+                self._serial_port_ntf.timeout = 0.5
 
             self._answer = None
             self._lock_cmd = threading.Lock()
