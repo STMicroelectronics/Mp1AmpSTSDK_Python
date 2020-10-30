@@ -1,0 +1,228 @@
+root@stm32mp1-av96:/usr/local/Mp1AmpSTSDK_Python/test# python3 demo_commsdk.py sdbsdk /usr/local/Cube-M4-
+examples/STM32MP157C-DK2/Applications/la/lib/firmware/how2eldb03110.elf
+Input test is  sdbsdk
+M4 fw file is  /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/la/lib/firmware/how2eldb03110.elf
+Entering main Py
+CommAPI: starting M4 firmware
+--->M4:  r
+<---M4:  CM4 : mMCUfreq=208878528 mTIM2freq=208878528
+
+<---M4:  CM4 : boot successful with STM32Cube FW version: v1.1.0 
+
+C func InitSdbReceiver called
+C func register_buff_ready_cb called
+C func InitSdb called, buff_size: 1048576 buff_num: 3 
+DBG filesize:1048576
+
+Forward efd info for buf0 with fd:8 and efd:9
+
+DBG mmappedData[0]:0xb5af2000
+
+Forward efd info for buf1 with fd:8 and efd:10
+
+DBG mmappedData[1]:0xb59f2000
+
+Forward efd info for buf2 with fd:8 and efd:11
+
+DBG mmappedData[2]:0xb58f2000
+<---M4:  CM4 : treatSDBEvent OK physAddr=0xf0200000 physSize=1048576 mArrayDdrBuffCount=0
+
+<---M4:  SDB0_RxCpltCallback: B1Af0300000L00100000
+
+<---M4:  CM4 : treatSDBEvent OK physAddr=0xf0300000 physSize=1048576 mArrayDdrBuffCount=1
+
+<---M4:  SDB0_RxCpltCallback: B2Af0400000L00100000
+
+<---M4:  CM4 : treatSDBEvent OK physAddr=0xf0400000 physSize=1048576 mArrayDdrBuffCount=2
+
+<---M4:  VIRT_UART0_RxCpltCallback: S002M
+
+<---M4:  treatRxCommand2 OK frequency=2000000
+
+<---M4:  CM4 : LAStateMachine starting...
+
+<---M4:  
+Data buffer is available now. ret: 2
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[1]
+buf[1] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[2]
+buf[2] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Data buffer is available now. ret: 1
+Parent read 3057589824 (0xb63f1e40) () from efd[0]
+buf[0] size:1048576
+CB _buffer_ready_cb called buff len:  1048576
+on_sdb_rx, len:  1048576
+    on_sdb_rx, sdb[0]:  55
+    on_sdb_rx, sdb[1]:  aa
+Stopping everything .....
+<---M4:  
+No buffer data within 30 seconds.
+Buffers successfully unmapped
+Deleting CommAPI object
+CommAPI: stopping M4 firmware
+Deleting RpmsgSdbAPI object
+RpmsgSdbAPI removing stm32_rpmsg_sdb.ko kernel mod
+root@stm32mp1-av96:/usr/local/Mp1AmpSTSDK_Python/test#

@@ -88,7 +88,7 @@ def main(argv):
 
         parser = argparse.ArgumentParser(description='Run a demo with associated M4 Fw.')
         parser.add_argument('demo', type=str, help='The demo to be run: <commsdk> or <sdbsdk> ')
-        parser.add_argument('m4fw', type=str, help='The associated m4 fw to be run: <OpenAMP_TTY_echo.elf> or  <how2eldb03110.elf>')
+        parser.add_argument('m4fw', type=str, help='The associated m4 fw to be run: <OpenAMP_TTY_echo.elf> or <how2eldb03110.elf>')
 
         args = parser.parse_args()
         print ('Input test is ', args.demo)
@@ -100,7 +100,7 @@ def main(argv):
             ser_obj = CommAPI("/dev/ttyRPMSG0",     \
                                 None,               \
                                 args.m4fw,          \
-                                ';',                \
+                                '\n',               \
                                 True)            
             sdb_obj = RpmsgSdbAPI(None, True)  
 
@@ -151,18 +151,18 @@ def main(argv):
             api_obj = CommAPI("/dev/ttyRPMSG0", \
                               "/dev/ttyRPMSG1", \
                                 args.m4fw,      \
-                                ';',           \
+                                ';',            \
                                 True)
-            m4_answ_listener = M4_answ_listener() 
+            m4_answ_listener = M4_answ_listener()
             m4_ntfy_listener = M4_ntfy_listener()
 
 #            while True:
 
-            print ("Blocking cmd_get: Prova blk; ...'")                
-            datard = api_obj.cmd_get("Prova blk;", 0)
+            print ("\nBlocking cmd_get: Test blk; ...")                
+            datard = api_obj.cmd_get("Test blk;", 0)
             print ("Returned: ",datard)
 
-            print ("Blocking cmd_set (binar data): 01,02,03,00 ...") 
+            print ("\nBlocking cmd_set (binar data): 01,02,03,00 ...") 
             datawr = b'\1\2\3\0'
             datard = api_obj.cmd_set(datawr, 0)
             print ("Returned: ",datard)
@@ -170,24 +170,23 @@ def main(argv):
             evt_answ.clear()
             api_obj.add_answers_listener(m4_answ_listener)
 
-            print ("Non blocking cmd_get: Prova non blk 1 ...")                        
-            if api_obj.cmd_get("Prova non blk 1;", 2) == -1:
+            print ("\nNon blocking cmd_get: Test non blk 1; ...")                        
+            if api_obj.cmd_get("Test non blk 1;", 2) == -1:
                 print ("API Locked: retry!")
             evt_answ.wait()
 
 	# TODO ack the M4 FW to not answer this cmd allowing response timeout to expire
             evt_answ.clear()
-            print ("Non blocking cmd_get 2 ...(with no answ from M4 so timed out)")   
-            if api_obj.cmd_get("Prova non blk 2;", 2) == -1:
+            print ("\nNon blocking cmd_get: Test non blk 2; ... (with no answ from M4 so timed out)")
+            if api_obj.cmd_get("Test non blk 2;", 2) == -1:
                 print ("API Locked: retry!")        
             evt_answ.wait() 
 
 	# async notify test
-            cnt=0
-            print ("Async notify test ...")           
+            print ("\nAsync notify test ...")           
             evt_ntfy.clear()
             api_obj.add_notifications_listener(m4_ntfy_listener)
-            print ("Enter in a separate shell: \"echo \"Prova ntfy\" > /dev/ttyRPMSG1\"")
+            print ("Enter in a separate shell: \"echo 'Test ntfy' > /dev/ttyRPMSG1\"")
             evt_ntfy.wait()
 
             print ("Exiting test ...")

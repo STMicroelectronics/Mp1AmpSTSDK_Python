@@ -49,16 +49,17 @@ import shutil
 
 # CONSTANTS
 
-"""Serial msgs terminator character."""
 DFT_TERMINATOR = ';'
-BINARY_ANSW_MAX_LEN = 512
+"""Serial msgs terminator character."""
+BINARY_ANSW_MAX_LENGHT = 512
+"""Maximum allowed binary message lenght."""
 
 
 # CLASSES
 
 class ThM4Answers(threading.Thread):
 
-    def __init__(self, caller, name=None, terminator=DFT_TERMINATOR, verbose=False):
+    def __init__(self, caller, name, terminator, verbose=False):
         super().__init__(name=name)   
         self._caller = caller
         self._terminator = terminator
@@ -66,14 +67,11 @@ class ThM4Answers(threading.Thread):
 
 
     def run(self):
-
         try:
-
             if self._verbose:
                 print ('Starting: ', self.name)
             self._answer = self._caller._serial_port_cmd.read_until(self._terminator,None)
-            # if self._verbose:
-            #    print ("RX:", self._answer.decode('utf-8'))
+            #print ('Rx Answ: ', self._answer.decode('utf-8'))
             if self._caller._answers_listener:
                 if self._answer.decode('utf-8') is '' :  # TODO command timeout: generate ad-hoc msg 
                     self._answer = "Timeout".encode('utf-8')
@@ -91,12 +89,12 @@ class ThM4Answers(threading.Thread):
 
     def __del__(self):
         if self._verbose:
-            print ("Deleting ThM4Answers")
+            print ('Deleting: ', self.name)
 
 
 class ThM4Notifications(threading.Thread):
 
-    def __init__(self, caller, name=None, terminator=DFT_TERMINATOR, verbose=False):
+    def __init__(self, caller, name, terminator, verbose=False):
         super().__init__(name=name)   
         self._caller = caller
         self._evt_stop_ntf = threading.Event()
@@ -108,8 +106,6 @@ class ThM4Notifications(threading.Thread):
     def run(self):
 
         try:
-            if self._verbose:
-                print ('Starting: ', self.name)
             # Enabling spontaneous notifications by writing the OpenAMP rpmsg port at least one time with a non-null 
             # character. See email from MCD:
             # Yes this is a “normal” behavior.
@@ -127,6 +123,8 @@ class ThM4Notifications(threading.Thread):
             # SUCCESS
             # This is the current implementation of the RPMSG protocol, so yes the A7 as to send the first message to finalize the connection.
             # https://wiki.st.com/stm32mpu/wiki/Coprocessor_management_troubleshooting_grid
+            if self._verbose:
+                print ('Starting: ', self.name)
             self._caller._serial_port_ntf.write(self._terminator)
             ret = self._caller._serial_port_ntf.read_until(self._terminator, None)   # wait for spurious echo if any                
             self._caller._serial_port_ntf.flush() 
@@ -135,11 +133,10 @@ class ThM4Notifications(threading.Thread):
                 if self._evt_stop_ntf.isSet():
                     self._evt_stop_ntf.clear() 
                     if self._verbose:
-                        print ("Stopping ThM4Notifications")
+                        print ('Stopping: ', self.name)
                     return
                 self._ntf = self._caller._serial_port_ntf.read_until(self._terminator, None)
-                if self._verbose and self._ntf.decode('utf-8') is not '':
-                    print ("Rx Notif:", self._ntf.decode('utf-8'))
+                #print ('Rx Notif: ', self._ntf.decode('utf-8'))
                 if self._ntf.decode('utf-8') is not '':
                     if self._caller._notifications_listener:
                         self._caller._notifications_listener.on_M4_notify(self._ntf.decode('utf-8'))
@@ -154,16 +151,16 @@ class ThM4Notifications(threading.Thread):
 
 
     def join(self, timeout=None):
-        
+
         if self._verbose:
-            print ("Joining ThM4Notifications")
+            print ('Joining: ', self.name)
         self._evt_stop_ntf.set()
         super().join(timeout) 
 
 
     def __del__(self):
         if self._verbose:
-            print ("Deleting ThM4Notifications")
+            print ('Deleting: ', self.name)
 
 
 class CommAPI():
@@ -173,25 +170,38 @@ class CommAPI():
 
     def __init__(self, serial_port_cmd, serial_port_ntf=None, m4_fw_name=None, terminator=DFT_TERMINATOR, verbose=False):
         """Constructor.
-        :param serial_port: Serial Port device path. Refer to
+        :param serial_port_cmd: Absolute path of the Serial Port device used for commands and answers.
+            E.g.: '/dev/ttyRPMSG0'.
+            Refer to
             `Serial <https://pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial>`_
             for more information.
-        :type serial_port: str (eg. /dev/ttyRPMSG0)
-        :m4_fw_name: M4 firmare name 
-        :type m4_fw_name: str (eg. /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf)
-        """
-    
-#        self._serial_port_cmd = serial_port
-        """Serial Port object."""
+        :type serial_port_cmd: str
 
-        """Last answer received on the serial port when executing a command."""
+        :param serial_port_ntf: Absolute path of the Serial Port device used for notifications.
+            E.g.: '/dev/ttyRPMSG1'.
+            Refer to
+            `Serial <https://pyserial.readthedocs.io/en/latest/pyserial_api.html#serial.Serial>`_
+            for more information.
+        :type serial_port_ntf: str
+
+        :param m4_fw_name: Absolute path of the M4 firmware.
+            E.g.: '/usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf'.
+        :type m4_fw_name: str
+
+        :param terminator: Terminator sequence used to separate messages on the serial ports.
+            E.g.: ';'.
+        :type terminator: str
+
+        :param verbose: If True, enables verbosity on output.
+        :type verbose: boolean
+        """
         try:
             self._verbose = verbose
             self._answers_listener=None
             self._notifications_listener=None
             if serial_port_cmd == serial_port_ntf:
-                raise CommsdkInvalidOperationException ("\nError CommAPI serial_port_cmd and serial_port_ntf must be different")
-            
+                raise CommsdkInvalidOperationException ("\nError CommAPI: 'serial_port_cmd' and 'serial_port_ntf' must be different")
+
             self._terminator = terminator.encode('utf-8')
             self._m4_fw_name = None            
             self._m4_fw_path = None
@@ -200,15 +210,24 @@ class CommAPI():
                     self._m4_fw_path, self._m4_fw_name = os.path.split(m4_fw_name)
                     shutil.copyfile(m4_fw_name, "/lib/firmware/"+self._m4_fw_name)
 
-                      # FIXME check if FW is already running: if not rise an exception
+                # FIXME check if FW is already running: if not rise an exception
                 if self._is_M4Fw_running():
                     self._stop_M4Fw()
-                    time.sleep(0.5)  # give fw time to stop
+                    # Checking for virtual com ports closed.
+                    if os.path.exists(serial_port_cmd) or \
+                        os.path.exists(serial_port_ntf):
+                        raise CommsdkInvalidOperationException(
+                            'OpenAMP error. Please reboot your device.')
 
                 # start m4 Fw
                 self._set_M4Fw_name(self._m4_fw_name)
                 self._start_M4Fw()
-                time.sleep(1)  # give fw time to start                       
+                # Checking for virtual com ports open.
+                while not os.path.exists(serial_port_cmd):
+                    pass
+                if serial_port_ntf:
+                    while not os.path.exists(serial_port_ntf):
+                        pass
 
             self._serial_port_cmd = serial.Serial()
             self._serial_port_cmd.port = serial_port_cmd
@@ -217,13 +236,16 @@ class CommAPI():
                 self._serial_port_cmd.open()
             if not self._serial_port_cmd.is_open:            
                 if self._verbose:
-                    print ("serial port for commands opening failed")
+                    raise CommsdkInvalidOperationException ("\nError: opening Serial port for commands failed")
 
-            self._serial_port_ntf = serial_port_ntf
             if serial_port_ntf != None:
                 self._serial_port_ntf = serial.Serial()
                 self._serial_port_ntf.port = serial_port_ntf
-                self._serial_port_ntf.timeout = 0.5
+                self._serial_port_ntf.timeout = 1
+                if not self._serial_port_ntf.is_open:
+                    self._serial_port_ntf.open()
+                if not self._serial_port_ntf.is_open:            
+                    raise CommsdkInvalidOperationException ("\nError: opening serial port for notifications failed")
 
             self._answer = None
             self._lock_cmd = threading.Lock()
@@ -238,17 +260,22 @@ class CommAPI():
 
             if self._verbose:
                 print ("Deleting CommAPI object")
+            if hasattr(self, '_m4_answ_listener') and \
+                self._m4_answ_listener:
+                self.remove_answers_listener(self._m4_answ_listener)
+            if hasattr(self, '_m4_ntfy_listener') and \
+                self._m4_ntfy_listener:
+                self.remove_notifications_listener(self._m4_ntfy_listener)
             if hasattr(self, '_serial_port_cmd') and \
-                self._serial_port_cmd != None and \
+                self._serial_port_cmd and \
                 self._serial_port_cmd.is_open:
                 self._serial_port_cmd.close()
             if hasattr(self, '_serial_port_ntf') and \
-                self._serial_port_ntf != None and \
+                self._serial_port_ntf and \
                 self._serial_port_ntf.is_open:
                 self._serial_port_ntf.close()
             if self._is_M4Fw_running():
                 self._stop_M4Fw()
-                time.sleep(0.5)  # give fw time to stop
 
         except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e
@@ -276,8 +303,7 @@ class CommAPI():
                         self._lock_cmd.release()            
                         return self._answer.decode('utf-8') # if no msg rx return ''
                     if type(msg) == str:
-                        if self._verbose:
-                           print ("TX:", msg.encode('utf-8'))
+                        #print ("Tx:", msg.encode('utf-8'))
                         self._serial_port_cmd.write(msg.encode('utf-8'))
                         self._serial_port_cmd.flush()         
                         self._serial_port_cmd.timeout = 1                        
@@ -286,22 +312,20 @@ class CommAPI():
                         self._lock_cmd.release() 
                         return self._answer.decode('utf-8')
                     else:  # binary msg type
-                        if self._verbose:
-                            print ("Tx msg type: ", type(msg))
-                            print (msg, len(msg))                        
+                        #print ("Tx msg type: ", type(msg))
+                        #print (msg, len(msg))                        
                         self._serial_port_cmd.timeout = 1                     
                         self._serial_port_cmd.write(msg)                
                         self._serial_port_cmd.flush()         
-                        self._answer = self._serial_port_cmd.read(BINARY_ANSW_MAX_LEN) 
+                        self._answer = self._serial_port_cmd.read(BINARY_ANSW_MAX_LENGHT) 
                         self._lock_cmd.release()                    
                         return self._answer
 
                 elif timeout > 0 and self._answers_listener != None:  # non blocking call
                     self._serial_port_cmd.timeout = timeout
-                    self._th_comm_rx = ThM4Answers(self, "ThM4Answers", self._terminator)
+                    self._th_comm_rx = ThM4Answers(self, "ThM4Answers", self._terminator, self._verbose)
                     self._th_comm_rx.start()                       
-                    if self._verbose:
-                        print ("TX:", msg.encode('utf-8')+'\n'.encode('utf-8'))
+                    #print ("Tx:", msg.encode('utf-8')+'\n'.encode('utf-8'))
                     self._serial_port_cmd.write(msg.encode('utf-8'))
                     self._serial_port_cmd.flush()         
                 elif (timeout): 
@@ -332,13 +356,9 @@ class CommAPI():
         """
         try:
             if listener is None:
-                raise CommsdkInvalidOperationException ("\nError add_notifications_listener: null listener")           
-            self._th_ntf = ThM4Notifications(self, "ThM4Notifications", self._terminator, True)            
+                raise CommsdkInvalidOperationException ("\nError add_notifications_listener: null listener")
             self._notifications_listener=listener
-            if not self._serial_port_ntf.is_open:
-                self._serial_port_ntf.open()                
-            if not self._serial_port_ntf.is_open:            
-                raise CommsdkInvalidOperationException ("\nError add_notifications_listener: serial port opening failed")
+            self._th_ntf = ThM4Notifications(self, "ThM4Notifications", self._terminator, self._verbose)
             self._th_ntf.start()
             return 0
 
@@ -356,12 +376,7 @@ class CommAPI():
             if not self._notifications_listener:
                 raise CommsdkInvalidOperationException ("\nError remove_notifications_listener: listener was not added") 
             self._th_ntf.join()    # stop the listening thread
-            if self._verbose:
-                print ("Notification Thread joined")
-            if self._serial_port_ntf.is_open:
-                self._serial_port_ntf.close()
-            if self._serial_port_ntf.is_open:            
-                raise CommsdkInvalidOperationException ("\nError remove_notifications_listener: serial port closing failed")                                
+            self._th_ntf = None    # delete the listening thread
             self._notifications_listener = None
             return 0
 
@@ -414,29 +429,35 @@ class CommAPI():
             if fw_state == "running":
                 return True
             return False
-            
+
     def _get_M4Fw_name(self):
         with open('/sys/class/remoteproc/remoteproc0/firmware', 'r') as fw_name_fd:
             name = fw_name_fd.read(100).strip()
             fw_name_fd.close()
             return name
-        
-    def _set_M4Fw_name(self, name):   #     "how2eldb03110.elf"  
+
+    def _set_M4Fw_name(self, name):
         with open('/sys/class/remoteproc/remoteproc0/firmware', 'r+') as fw_name_fd:
             res = fw_name_fd.write(name)
             fw_name_fd.close()
             return res
 
     def _start_M4Fw(self):
+        if self._verbose:
+            print ("CommAPI: starting M4 firmware")
         with open('/sys/class/remoteproc/remoteproc0/state', 'r+') as fw_state_fd:
             res = fw_state_fd.write("start")
             fw_state_fd.close()
+            time.sleep(0.5)  # give fw time to start.
             return res
-        
+
     def _stop_M4Fw(self):
+        if self._verbose:
+            print ("CommAPI: stopping M4 firmware")
         with open('/sys/class/remoteproc/remoteproc0/state', 'r+') as fw_state_fd:
             res = fw_state_fd.write("stop")
-            fw_state_fd.close()
+            fw_state_fd.close()  # give fw time to stop.
+            time.sleep(0.5)
             return res
 
 
@@ -445,7 +466,6 @@ class CommAPI():
 """listener to the messages from M4 (spontaneous notifications).
 It is a thread safe list, so a listener can subscribe itself through a
 callback."""
-
 
 class CommAPINotificationsListener(object):
     """Interface used by the :class:`wire_st_sdk.iolink.IOLinkMaster` class to
