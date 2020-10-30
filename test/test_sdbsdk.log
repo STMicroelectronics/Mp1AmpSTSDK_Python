@@ -1,8 +1,8 @@
-root@stm32mp1-av96:/usr/local/Mp1AmpSTSDK_Python/test# python3 demo_commsdk.py sdbsdk /usr/local/Cube-M4-
-examples/STM32MP157C-DK2/Applications/la/lib/firmware/how2eldb03110.elf
+root@stm32mp1-av96:/usr/local/Mp1AmpSTSDK_Python/test# python3 demo_commsdk.py sdbsdk /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/la/lib/firmware/how2eldb03110.elf
 Input test is  sdbsdk
 M4 fw file is  /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/la/lib/firmware/how2eldb03110.elf
 Entering main Py
+Creating CommAPI object
 CommAPI: starting M4 firmware
 --->M4:  r
 <---M4:  CM4 : mMCUfreq=208878528 mTIM2freq=208878528
@@ -16,15 +16,15 @@ DBG filesize:1048576
 
 Forward efd info for buf0 with fd:8 and efd:9
 
-DBG mmappedData[0]:0xb5af2000
+DBG mmappedData[0]:0xb5b1b000
 
 Forward efd info for buf1 with fd:8 and efd:10
 
-DBG mmappedData[1]:0xb59f2000
+DBG mmappedData[1]:0xb5a1b000
 
 Forward efd info for buf2 with fd:8 and efd:11
 
-DBG mmappedData[2]:0xb58f2000
+DBG mmappedData[2]:0xb591b000
 <---M4:  CM4 : treatSDBEvent OK physAddr=0xf0200000 physSize=1048576 mArrayDdrBuffCount=0
 
 <---M4:  SDB0_RxCpltCallback: B1Af0300000L00100000
@@ -43,175 +43,175 @@ DBG mmappedData[2]:0xb58f2000
 
 <---M4:  
 Data buffer is available now. ret: 2
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[1]
+Parent read 3057757760 (0xb641ae40) () from efd[1]
 buf[1] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[2]
+Parent read 3057757760 (0xb641ae40) () from efd[2]
 buf[2] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576
     on_sdb_rx, sdb[0]:  55
     on_sdb_rx, sdb[1]:  aa
 Data buffer is available now. ret: 1
-Parent read 3057589824 (0xb63f1e40) () from efd[0]
+Parent read 3057757760 (0xb641ae40) () from efd[0]
 buf[0] size:1048576
 CB _buffer_ready_cb called buff len:  1048576
 on_sdb_rx, len:  1048576

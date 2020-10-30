@@ -156,7 +156,7 @@ def main(argv):
             m4_answ_listener = M4_answ_listener()
             m4_ntfy_listener = M4_ntfy_listener()
 
-#            while True:
+            #while True:
 
             print ("\nBlocking cmd_get: Test blk; ...")                
             datard = api_obj.cmd_get("Test blk;", 0)
@@ -175,14 +175,14 @@ def main(argv):
                 print ("API Locked: retry!")
             evt_answ.wait()
 
-	# TODO ack the M4 FW to not answer this cmd allowing response timeout to expire
+	        # TODO ack the M4 FW to not answer this cmd allowing response timeout to expire
             evt_answ.clear()
             print ("\nNon blocking cmd_get: Test non blk 2; ... (with no answ from M4 so timed out)")
             if api_obj.cmd_get("Test non blk 2;", 2) == -1:
                 print ("API Locked: retry!")        
             evt_answ.wait() 
 
-	# async notify test
+	        # async notify test
             print ("\nAsync notify test ...")           
             evt_ntfy.clear()
             api_obj.add_notifications_listener(m4_ntfy_listener)

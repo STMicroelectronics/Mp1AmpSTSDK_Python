@@ -77,7 +77,7 @@ class ThM4Answers(threading.Thread):
                     self._answer = "Timeout".encode('utf-8')
                 self._caller._answers_listener.on_M4_answer(self._answer.decode('utf-8'))                    
             else:
-                raise CommsdkInvalidOperationException ("\nError amswers listener to be added")                
+                raise CommsdkInvalidOperationException ("Error amswers listener to be added")                
             self._caller._lock_cmd.release()       
 
         except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
@@ -141,7 +141,7 @@ class ThM4Notifications(threading.Thread):
                     if self._caller._notifications_listener:
                         self._caller._notifications_listener.on_M4_notify(self._ntf.decode('utf-8'))
                     else:
-                        raise CommsdkInvalidOperationException ("\nError notification listener to be added")
+                        raise CommsdkInvalidOperationException ("Error notification listener to be added")
 
         except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             if self._caller._serial_port_ntf.is_open:
@@ -197,10 +197,15 @@ class CommAPI():
         """
         try:
             self._verbose = verbose
-            self._answers_listener=None
-            self._notifications_listener=None
+            self._answers_listener = None
+            self._notifications_listener = None
+            self._released = False
+
+            if self._verbose:
+                print('Creating CommAPI object')
+
             if serial_port_cmd == serial_port_ntf:
-                raise CommsdkInvalidOperationException ("\nError CommAPI: 'serial_port_cmd' and 'serial_port_ntf' must be different")
+                raise CommsdkInvalidOperationException ("Error CommAPI: 'serial_port_cmd' and 'serial_port_ntf' must be different")
 
             self._terminator = terminator.encode('utf-8')
             self._m4_fw_name = None            
@@ -236,7 +241,7 @@ class CommAPI():
                 self._serial_port_cmd.open()
             if not self._serial_port_cmd.is_open:            
                 if self._verbose:
-                    raise CommsdkInvalidOperationException ("\nError: opening Serial port for commands failed")
+                    raise CommsdkInvalidOperationException ("Error: opening Serial port for commands failed")
 
             if serial_port_ntf != None:
                 self._serial_port_ntf = serial.Serial()
@@ -245,7 +250,7 @@ class CommAPI():
                 if not self._serial_port_ntf.is_open:
                     self._serial_port_ntf.open()
                 if not self._serial_port_ntf.is_open:            
-                    raise CommsdkInvalidOperationException ("\nError: opening serial port for notifications failed")
+                    raise CommsdkInvalidOperationException ("Error: opening serial port for notifications failed")
 
             self._answer = None
             self._lock_cmd = threading.Lock()
@@ -255,27 +260,39 @@ class CommAPI():
 
 
     def __del__(self):
+        if self._verbose:
+            print ("Deleting CommAPI object")
+        if not self._released:
+            self.release()
 
+
+    def release(self):
+        """Release resources.
+        """
         try:
 
-            if self._verbose:
-                print ("Deleting CommAPI object")
             if hasattr(self, '_m4_answ_listener') and \
                 self._m4_answ_listener:
                 self.remove_answers_listener(self._m4_answ_listener)
+                del self._m4_answ_listener
             if hasattr(self, '_m4_ntfy_listener') and \
                 self._m4_ntfy_listener:
                 self.remove_notifications_listener(self._m4_ntfy_listener)
+                del self._m4_ntfy_listener
             if hasattr(self, '_serial_port_cmd') and \
                 self._serial_port_cmd and \
                 self._serial_port_cmd.is_open:
                 self._serial_port_cmd.close()
+                del self._serial_port_cmd
             if hasattr(self, '_serial_port_ntf') and \
                 self._serial_port_ntf and \
                 self._serial_port_ntf.is_open:
                 self._serial_port_ntf.close()
+                del self._serial_port_ntf
             if self._is_M4Fw_running():
                 self._stop_M4Fw()
+            self._released = True
+            del self
 
         except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e
@@ -291,7 +308,7 @@ class CommAPI():
         : return: for blocking call (timeout =0 or -1) str type answer msg, if no answer return ''
                   for non blocking call (timout >0) return 0 if ok, -1 if error
         :type listener: :class:
-        """ 
+        """
         try:
 
             if self._lock_cmd.acquire(False):
@@ -356,8 +373,12 @@ class CommAPI():
         """
         try:
             if listener is None:
-                raise CommsdkInvalidOperationException ("\nError add_notifications_listener: null listener")
+                raise CommsdkInvalidOperationException ("Error add_notifications_listener: null listener")
             self._notifications_listener=listener
+            if not self._serial_port_ntf.is_open:
+                self._serial_port_ntf.open()                
+            if not self._serial_port_ntf.is_open:            
+                raise CommsdkInvalidOperationException ("Error add_notifications_listener: serial port opening failed")
             self._th_ntf = ThM4Notifications(self, "ThM4Notifications", self._terminator, self._verbose)
             self._th_ntf.start()
             return 0
@@ -372,10 +393,14 @@ class CommAPI():
         try:
 
             if listener is None:
-                raise CommsdkInvalidOperationException ("\nError remove_notifications_listener: null listener")
+                raise CommsdkInvalidOperationException ("Error remove_notifications_listener: null listener")
             if not self._notifications_listener:
-                raise CommsdkInvalidOperationException ("\nError remove_notifications_listener: listener was not added") 
+                raise CommsdkInvalidOperationException ("Error remove_notifications_listener: listener was not added") 
             self._th_ntf.join()    # stop the listening thread
+            if self._serial_port_ntf.is_open:
+                self._serial_port_ntf.close()
+            if self._serial_port_ntf.is_open:            
+                raise CommsdkInvalidOperationException ("Error remove_notifications_listener: serial port closing failed")                                
             self._th_ntf = None    # delete the listening thread
             self._notifications_listener = None
             return 0
@@ -393,9 +418,9 @@ class CommAPI():
         try:
 
             if listener is None:
-                raise CommsdkInvalidOperationException ("\nError add_answers_listener: null listener")
+                raise CommsdkInvalidOperationException ("Error add_answers_listener: null listener")
             if not self._lock_cmd.acquire(False):        
-                raise CommsdkInvalidOperationException ("\nError add_answers_listener: locked by outstanding command")
+                raise CommsdkInvalidOperationException ("Error add_answers_listener: locked by outstanding command")
             self._answers_listener=listener
             self._lock_cmd.release()        
             return 0
@@ -410,11 +435,11 @@ class CommAPI():
         try:
 
             if listener is None:
-                raise CommsdkInvalidOperationException ("\nError remove_answers_listener: null listener")
+                raise CommsdkInvalidOperationException ("Error remove_answers_listener: null listener")
             if not self._answers_listener:
-                raise CommsdkInvalidOperationException ("\nError remove_answers_listener: listener was not added")
+                raise CommsdkInvalidOperationException ("Error remove_answers_listener: listener was not added")
             if not self._lock_cmd.acquire(False):        
-                raise CommsdkInvalidOperationException ("\nError remove_answers_listener: locked by outstanding command")
+                raise CommsdkInvalidOperationException ("Error remove_answers_listener: locked by outstanding command")
             self._answers_listener=None
             self._lock_cmd.release()
             return 0

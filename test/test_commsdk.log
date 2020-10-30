@@ -1,8 +1,8 @@
-root@stm32mp1-av96:/usr/local/Mp1AmpSTSDK_Python/test# python3 demo_commsdk.py commsdk /usr/local/Cube-M4
--examples/STM32MP157C-EV1/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf
+root@stm32mp1-av96:/usr/local/Mp1AmpSTSDK_Python/test# python3 demo_commsdk.py commsdk /usr/local/Cube-M4-examples/STM32MP157C-EV1/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf
 Input test is  commsdk
 M4 fw file is  /usr/local/Cube-M4-examples/STM32MP157C-EV1/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf
 Entering main Py
+Creating CommAPI object
 CommAPI: starting M4 firmware
 
 Blocking cmd_get: Test blk; ...
