@@ -1,12 +1,12 @@
 from setuptools.command.build_py import build_py
-from setuptools import setup
+from setuptools import setup, find_packages, Extension
 import setuptools
 import subprocess
 import shlex
 import sys
 import os
 
-VERSION='0.0.8'
+VERSION='0.0.13'
 
 def pre_install():
     """Do the custom compiling of the libsdbsdk.so library from the makefile"""
@@ -53,6 +53,12 @@ except ImportError:
 with open("README.md", "r", encoding='utf-8') as fh:
     long_description = fh.read()
 
+module_1 = Extension(
+    "libsdbsdk",
+    include_dirs=["mp1ampstsdk"],
+    sources = ["mp1ampstsdk/sdbsdk.c"],
+    library_dirs = ['.'])
+
 setup(
     name="mp1ampstsdk", 
     version=VERSION,
@@ -63,7 +69,7 @@ setup(
     long_description_content_type="text/markdown",
     url="https://github.com/mapellil/Mp1AmpSTSDK_Python",
 	keywords=[ 'MP1', 'STM', 'STSDK' ],    
-    #packages=setuptools.find_packages(),
+    #packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3.5",
         "License :: OSI Approved :: MIT License",
@@ -77,4 +83,5 @@ setup(
         'mp1ampstsdk': ['sdbsdk.c','sdbsdk.h','Makefile','libsdbsdk.so']
     },
     cmdclass=setup_cmdclass,
+    ext_modules=[module_1],
 )
