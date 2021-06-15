@@ -73,14 +73,14 @@ class ThM4Answers(threading.Thread):
             self._answer = self._caller._serial_port_cmd.read_until(self._terminator,None)
             #print ('Rx Answ: ', self._answer.decode('utf-8'))
             if self._caller._answers_listener:
-                if self._answer.decode('utf-8') is '' :  # TODO command timeout: generate ad-hoc msg 
+                if self._answer.decode('utf-8') == "":  # TODO command timeout: generate ad-hoc msg 
                     self._answer = "Timeout".encode('utf-8')
                 self._caller._answers_listener.on_M4_answer(self._answer.decode('utf-8'))                    
             else:
                 raise CommsdkInvalidOperationException ("Error amswers listener to be added")                
             self._caller._lock_cmd.release()       
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             if self._caller._answers_listener.is_open:
                 self._caller._answers_listener.close()
             self._caller._answers_listener = None            
@@ -137,13 +137,13 @@ class ThM4Notifications(threading.Thread):
                     return
                 self._ntf = self._caller._serial_port_ntf.read_until(self._terminator, None)
                 #print ('Rx Notif: ', self._ntf.decode('utf-8'))
-                if self._ntf.decode('utf-8') is not '':
+                if self._ntf.decode('utf-8') != "":
                     if self._caller._notifications_listener:
                         self._caller._notifications_listener.on_M4_notify(self._ntf.decode('utf-8'))
                     else:
                         raise CommsdkInvalidOperationException ("Error notification listener to be added")
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             if self._caller._serial_port_ntf.is_open:
                 self._caller._serial_port_ntf.close()
             self._caller._notifications_listener = None            
@@ -255,7 +255,7 @@ class CommAPI():
             self._answer = None
             self._lock_cmd = threading.Lock()
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e
 
 
@@ -294,7 +294,7 @@ class CommAPI():
             self._released = True
             del self
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e
 
 
@@ -353,7 +353,7 @@ class CommAPI():
             else:   # channel locked by another async outstanding command 
                 return -1
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e
 
 
@@ -383,7 +383,7 @@ class CommAPI():
             self._th_ntf.start()
             return 0
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e
 
 
@@ -405,7 +405,7 @@ class CommAPI():
             self._notifications_listener = None
             return 0
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e
 
 
@@ -425,7 +425,7 @@ class CommAPI():
             self._lock_cmd.release()        
             return 0
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e        
 
 
@@ -444,7 +444,7 @@ class CommAPI():
             self._lock_cmd.release()
             return 0
 
-        except (SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
+        except (Exception, SerialException, SerialTimeoutException, CommsdkInvalidOperationException) as e:
             raise e        
 
     def _is_M4Fw_running(self):        
