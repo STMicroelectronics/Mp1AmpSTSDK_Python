@@ -33,7 +33,7 @@ The comm_exceptions module defines exceptions raised by the commsdk.
 
 # CLASSES
 
-class CommsdkInvalidOperationException(Exception):
+class CommSDKInvalidOperationException(Exception):
     """Exception raised whenever a command is not executed successfully."""
 
     def __init__(self, msg):
@@ -41,4 +41,4 @@ class CommsdkInvalidOperationException(Exception):
         Args:
             msg (str): The message to raise.
         """
-        super(CommsdkInvalidOperationException, self).__init__(msg)
+        super(CommSDKInvalidOperationException, self).__init__(msg)

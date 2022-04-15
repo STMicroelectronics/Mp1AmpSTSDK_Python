@@ -12,24 +12,24 @@ Blocking cmd_set (binar data): 01,02,03,00 ...
 Returned:  b'\x01\x02\x03\x00'
 
 Non blocking cmd_get: Test non blk 1; ...
-Starting:  ThM4Answers
-on_M4_answer:  Test non blk 1;
+Starting:  ThM4Responses
+on_M4_response:  Test non blk 1;
 
 Non blocking cmd_get: Test non blk 2; ... (with no answ from M4 so timed out)
-Deleting:  ThM4Answers
-Starting:  ThM4Answers
-on_M4_answer:  Test non blk 2;
+Deleting:  ThM4Responses
+Starting:  ThM4Responses
+on_M4_response:  Test non blk 2;
 
 Async notify test ...
 Starting:  ThM4Notifications
 Enter in a separate shell: "echo 'Test ntfy' > /dev/ttyRPMSG1"
-on_M4_notify:  Test ntfy
+on_m4_notify:  Test ntfy
 
 Exiting test ...
 Joining:  ThM4Notifications
 Stopping:  ThM4Notifications
 Deleting:  ThM4Notifications
-Deleting:  ThM4Answers
+Deleting:  ThM4Responses
 Deleting CommAPI object
 CommAPI: stopping M4 firmware
 root@stm32mp1-av96:/usr/local/Mp1AmpSTSDK_Python/test#

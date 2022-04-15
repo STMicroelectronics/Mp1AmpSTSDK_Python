@@ -104,7 +104,7 @@ Once the new .elf is obtained, for a quick test is possible to scp it on the DK-
 ## Open Points
  
  - Demo:
-  The sdbsdk demo could be extended in order to use asynchronous cmds/answers to M4
+  The sdbsdk demo could be extended in order to use asynchronous cmds/responses to M4
   The demo could trap exceptions from below layers
    
  - py_sdbsdk.py:

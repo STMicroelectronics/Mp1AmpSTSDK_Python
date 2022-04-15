@@ -38,7 +38,7 @@ import time
 from datetime import datetime
 from threading import RLock
 import threading  
-from mp1ampstsdk.commsdk import CommAPIAnswersListener
+from mp1ampstsdk.commsdk import CommAPIResponsesListener
 from mp1ampstsdk.commsdk import CommAPINotificationsListener
 from mp1ampstsdk.commsdk import CommAPI
 from mp1ampstsdk.py_sdbsdk import RpmsgSdbAPI
@@ -47,10 +47,10 @@ from mp1ampstsdk.py_sdbsdk import RpmsgSdbAPIListener
 evt_ntfy = threading.Event()
 evt_answ = threading.Event()
 
-class M4_answ_listener (CommAPIAnswersListener):
+class M4_answ_listener (CommAPIResponsesListener):
 
-    def on_M4_answer(self, msg):
-        print("on_M4_answer: ", msg)
+    def on_M4_response(self, msg):
+        print("on_M4_response: ", msg)
         if msg == "Timeout":
             pass
         evt_answ.set()
@@ -58,8 +58,8 @@ class M4_answ_listener (CommAPIAnswersListener):
 
 class M4_ntfy_listener (CommAPINotificationsListener):
 
-	def on_M4_notify(self, msg):
-		print("on_M4_notify: ", msg)
+	def on_m4_notify(self, msg):
+		print("on_m4_notify: ", msg)
 		evt_ntfy.set()
 
 
@@ -168,14 +168,14 @@ def main(argv):
             print ("Returned: ",datard)
 
             evt_answ.clear()
-            api_obj.add_answers_listener(m4_answ_listener)
+            api_obj.add_responses_listener(m4_answ_listener)
 
             print ("\nNon blocking cmd_get: Test non blk 1; ...")                        
             if api_obj.cmd_get("Test non blk 1;", 2) == -1:
                 print ("API Locked: retry!")
             evt_answ.wait()
 
-	        # TODO ack the M4 FW to not answer this cmd allowing response timeout to expire
+	        # TODO ack the M4 FW to not response this cmd allowing response timeout to expire
             evt_answ.clear()
             print ("\nNon blocking cmd_get: Test non blk 2; ... (with no answ from M4 so timed out)")
             if api_obj.cmd_get("Test non blk 2;", 2) == -1:
@@ -191,7 +191,7 @@ def main(argv):
 
             print ("Exiting test ...")
             api_obj.remove_notifications_listener(m4_ntfy_listener)
-            api_obj.remove_answers_listener(m4_answ_listener)
+            api_obj.remove_responses_listener(m4_answ_listener)
 
 #            sys.exit(0)      
 #            os._exit(0)
