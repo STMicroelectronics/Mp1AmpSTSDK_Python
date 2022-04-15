@@ -2,7 +2,7 @@
 
 Mp1AmpSTSDK_Python is a Python3 SDK from STMicroelectronics simplifing the virtual serial OpenAMP RpMsgs communiction between the A7 and M4 processors in the MP1 SoC. The SDK is meant to help and speed-up Python developpers not familiar with C OpenAMP development and Linux kernel drivers interface.
 The SDK is divided in two modules:
-- commsdk.py: simple serial protocol based on the set/get/notify paradigm, transporting ASCCI UTF-8 strings. 
+- commsdk.py: simple serial protocol based on the set/get/notify paradigm, transporting ASCII UTF-8 strings. 
 - py_sdbsdk.py: Shared Data Buffer sdk simplifying the large bynary data buffers exchange between A7 and M4 through OpenAMP and dedicated Linux external kernel driver
 - sdbsdk.c: is the C backend of py_sdbsdk.py representing the user side API of stm32_rpmsg_sdb.ko external kernel object. The compilation of sdbsdk.c file generates the libsdbsdk.so which is the User space wrapper library containing API of the above described kernel module. 
 
@@ -33,7 +33,7 @@ Clone the SDK git repository to download the tests:
 
 Enter the "Mp1AmpSTSDK_Python/tests" folder and run the desired test. For example, to test just the OpenAMP virtual comm port functionality, run:
   ```Shell
-  $ python3 demo_commsdk.py commsdk /usr/local/Cube-M4-examples/STM32MP157C-EV1/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf
+  $ python3 demo_commsdk.py commsdk /usr/local/Cube-M4-examples/STM32MP157C-DK2/Applications/OpenAMP/OpenAMP_TTY_echo/lib/firmware/OpenAMP_TTY_echo.elf
   ```
 An example of correct execution is reported by the "test_commsdk.log" file.
 

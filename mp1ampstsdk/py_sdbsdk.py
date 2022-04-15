@@ -222,7 +222,7 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         try:
 
             if not self._sdb_buffer_rx_listener:
-                raise CommSDKInvalidOperationException("\nError remove_sdb_notifications_listener: listener was not added")
+                raise CommSDKInvalidOperationException("\nError remove_sdb_notification_listener: listener was not added")
             self._sdb_buffer_rx_listener = None
             return 0        
 
@@ -234,7 +234,7 @@ class RpmsgSdbAPI():    # TODO make it a singleton object
         if self._verbose:
             print("CB _buffer_ready_cb called buff len: ", sdb_buff_len)
         if self._sdb_buffer_rx_listener is not None:
-            self._sdb_buffer_rx_listener.on_M4_sdb_rx(sdb_buff, sdb_buff_len)
+            self._sdb_buffer_rx_listener.on_m4_sdb_rx(sdb_buff, sdb_buff_len)
         return 0
 
 # INTERFACES
@@ -246,13 +246,13 @@ class RpmsgSdbAPIListener(object):
     __metaclass__ = ABCMeta
 
     @abstractmethod
-    def on_M4_sdb_rx(self, sdb, sdb_len):
+    def on_m4_sdb_rx(self, sdb, sdb_len):
         """To be called whenever a M4 processor sends a sdb buffer.
         :param sdb: sdb buffer from M4 
         :param sdb_len: sdb buffer length from M4         
         :raises NotImplementedError: is raised if the method is not implemented.
         """
-        raise NotImplementedError('You must define "CommAPINotificationListener()" to use '
-            'the "CommAPINotificationListener" class.')
+        raise NotImplementedError("You must define \"on_m4_sdb_rx()\" to use "
+            "the \"RpmsgSdbAPIListener\" class.")
 
 

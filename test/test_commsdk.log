@@ -13,17 +13,17 @@ Returned:  b'\x01\x02\x03\x00'
 
 Non blocking cmd_get: Test non blk 1; ...
 Starting:  ThM4Responses
-on_M4_response:  Test non blk 1;
+on_m4_response:  Test non blk 1;
 
 Non blocking cmd_get: Test non blk 2; ... (with no answ from M4 so timed out)
 Deleting:  ThM4Responses
 Starting:  ThM4Responses
-on_M4_response:  Test non blk 2;
+on_m4_response:  Test non blk 2;
 
 Async notify test ...
 Starting:  ThM4Notifications
 Enter in a separate shell: "echo 'Test ntfy' > /dev/ttyRPMSG1"
-on_m4_notify:  Test ntfy
+on_m4_notification:  Test ntfy
 
 Exiting test ...
 Joining:  ThM4Notifications

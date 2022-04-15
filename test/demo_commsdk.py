@@ -38,8 +38,8 @@ import time
 from datetime import datetime
 from threading import RLock
 import threading  
-from mp1ampstsdk.commsdk import CommAPIResponsesListener
-from mp1ampstsdk.commsdk import CommAPINotificationsListener
+from mp1ampstsdk.commsdk import CommAPIResponseListener
+from mp1ampstsdk.commsdk import CommAPINotificationListener
 from mp1ampstsdk.commsdk import CommAPI
 from mp1ampstsdk.py_sdbsdk import RpmsgSdbAPI
 from mp1ampstsdk.py_sdbsdk import RpmsgSdbAPIListener
@@ -47,25 +47,25 @@ from mp1ampstsdk.py_sdbsdk import RpmsgSdbAPIListener
 evt_ntfy = threading.Event()
 evt_answ = threading.Event()
 
-class M4_answ_listener (CommAPIResponsesListener):
+class M4_answ_listener (CommAPIResponseListener):
 
-    def on_M4_response(self, msg):
-        print("on_M4_response: ", msg)
+    def on_m4_response(self, msg):
+        print("on_m4_response: ", msg)
         if msg == "Timeout":
             pass
         evt_answ.set()
 
 
-class M4_ntfy_listener (CommAPINotificationsListener):
+class M4_ntfy_listener (CommAPINotificationListener):
 
-	def on_m4_notify(self, msg):
-		print("on_m4_notify: ", msg)
+	def on_m4_notification(self, msg):
+		print("on_m4_notification: ", msg)
 		evt_ntfy.set()
 
 
 class M4_sdb_rx_listener (RpmsgSdbAPIListener):
 
-    def on_M4_sdb_rx(self, sdb, sdb_len):
+    def on_m4_sdb_rx(self, sdb, sdb_len):
         print ("on_sdb_rx, len: ", sdb_len)
         print ("    on_sdb_rx, sdb[0]: ", sdb[0].hex())  # just for testing 
         print ("    on_sdb_rx, sdb[1]: ", sdb[1].hex())              
@@ -120,7 +120,7 @@ def main(argv):
                 answ = ser_obj.cmd_get(None, 0)        
                 print ("<---M4: ", answ)   
              
-            sdb_obj.start_sdb_receiver();  # start the user side drv receiver thread, the on_M4_sdb_rx will be triggered by M4 when sdb is ready
+            sdb_obj.start_sdb_receiver();  # start the user side drv receiver thread, the on_m4_sdb_rx will be triggered by M4 when sdb is ready
 
          
             i=0
@@ -168,7 +168,7 @@ def main(argv):
             print ("Returned: ",datard)
 
             evt_answ.clear()
-            api_obj.add_responses_listener(m4_answ_listener)
+            api_obj.add_response_listener(m4_answ_listener)
 
             print ("\nNon blocking cmd_get: Test non blk 1; ...")                        
             if api_obj.cmd_get("Test non blk 1;", 2) == -1:
@@ -185,13 +185,13 @@ def main(argv):
 	        # async notify test
             print ("\nAsync notify test ...")           
             evt_ntfy.clear()
-            api_obj.add_notifications_listener(m4_ntfy_listener)
+            api_obj.add_notification_listener(m4_ntfy_listener)
             print ("Enter in a separate shell: \"echo 'Test ntfy' > /dev/ttyRPMSG1\"")
             evt_ntfy.wait()
 
             print ("Exiting test ...")
-            api_obj.remove_notifications_listener(m4_ntfy_listener)
-            api_obj.remove_responses_listener(m4_answ_listener)
+            api_obj.remove_notification_listener(m4_ntfy_listener)
+            api_obj.remove_response_listener(m4_answ_listener)
 
 #            sys.exit(0)      
 #            os._exit(0)
