@@ -108,27 +108,21 @@ class M4NotificationThread(threading.Thread):
     def run(self):
 
         try:
-            # Enabling spontaneous notifications by writing the OpenAMP rpmsg port at least one time with a non-null 
-            # character. See email from MCD:
-            # Yes this is a “normal” behavior.
-            # For the RPMSG protocol both side have to know the remote destination address to send a message
-            # So on M4 boot
-            # M4 send a name service announcement RPMsg on Virtual UART init ( linked to the endpoint creation)
-            # Here the M4 provides to the A7 its endpoint address ( 0x0) by sending the message to a specific address (0x35)
-            # Alternative 1)
-            # The M4 start to send new message 
-            # As OpenAMP does not know the destination address => FAIL
-            # Alternative 2)
-            # The A7 send a first message
-            # The A7 provide is address( 0x400) as source of the message to the M4 address 0x0
-            # The OpenAMP associates both address and know now the A7 destination address
-            # SUCCESS
-            # This is the current implementation of the RPMSG protocol, so yes the A7 as to send the first message to finalize the connection.
+            # Enabling spontaneous notifications by writing the OpenAMP RPMSG port at least once with a non-null 
+            # character: the A7 has to send the first message to initialize the connection.
+            # 
+            # For the RPMSG protocol both sides have to know the remote destination address to send a message.
+            # On M4 boot, the M4 sends a name service announcement RPMSG on Virtual UART init (linked to the endpoint creation),
+            # the M4 provides to the A7 its endpoint address (0x0) by sending the message to a specific address (0x35).
+            # If the M4 started to send a new message, then OpenAMP would not know the destination address, thus failing;
+            # hence, it's the A7 that has to send a first message, so that it provides his address(0x400) as source of the message
+            # itself to the M4 address (0x0). Then, the OpenAMP associates the address and knows the A7 destination address.
+            #
             # https://wiki.st.com/stm32mpu/wiki/Coprocessor_management_troubleshooting_grid
             if self._verbose:
                 print("CommAPI: Starting M4NotificationThread.")
             self._caller._serial_port_notification.write(self._terminator)
-            ret = self._caller._serial_port_notification.read_until(self._terminator, None)   # wait for spurious echo if any                
+            #ret = self._caller._serial_port_notification.read_until(self._terminator, None)   # wait for spurious echo if any                
             self._caller._serial_port_notification.flush() 
 
             while True:
